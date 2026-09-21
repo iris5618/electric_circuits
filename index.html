@@ -3,14 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>電路學習題與作業記錄本</title>
-    <!-- Tailwind CSS -->
+    <title>電路學學習歷程與作業本</title>
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- FontAwesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <!-- MathJax for LaTeX Rendering -->
+    <!-- MathJax 3 用於數學公式渲染 -->
     <script>
-        MathJax = {
+        window.MathJax = {
             tex: {
                 inlineMath: [['$', '$'], ['\\(', '\\)']],
                 displayMath: [['$$', '$$'], ['\\[', '\\]']]
@@ -18,566 +16,543 @@
             svg: { fontCache: 'global' }
         };
     </script>
-    <script type="text/javascript" id="MathJax-script" async
-        src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
-    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <style>
-        .step-card { border-left: 4px solid #4f46e5; }
-        .formula-box { background-color: #f8fafc; border: 1px solid #e2e8f0; }
-        .ans-box { background-color: #ecfdf5; border: 1px solid #a7f3d0; color: #065f46; }
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: #f1f5f9; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
+        .tab-active { background-color: #2563eb; color: #ffffff; }
+        .tab-inactive { background-color: #f3f4f6; color: #374151; }
+        .tab-inactive:hover { background-color: #e5e7eb; }
     </style>
 </head>
-<body class="bg-slate-100 text-slate-800 font-sans h-screen flex overflow-hidden">
+<body class="bg-slate-50 min-h-screen flex flex-col md:flex-row text-slate-800">
 
-    <!-- Mobile Sidebar Backdrop -->
-    <div id="sidebar-backdrop" onclick="toggleMobileSidebar()" class="fixed inset-0 bg-slate-900/50 z-20 hidden md:hidden"></div>
-
-    <!-- Sidebar Navigation -->
-    <aside id="sidebar" class="w-72 bg-slate-900 text-slate-300 flex flex-col z-30 fixed md:static inset-y-0 left-0 transform -translate-x-full md:translate-x-0 transition-transform duration-200 ease-in-out shadow-xl">
-        <!-- Sidebar Header -->
-        <div class="p-5 border-b border-slate-800 flex items-center justify-between">
-            <div class="flex items-center space-x-3">
-                <div class="w-9 h-9 rounded-xl bg-indigo-600 flex items-center justify-center text-white font-bold text-lg shadow-lg shadow-indigo-500/30">
-                    <i class="fa-solid fa-bolt"></i>
-                </div>
-                <div>
-                    <h1 class="font-bold text-white text-base leading-tight">電路學作業本</h1>
-                    <p class="text-xs text-slate-400">Circuit Learning Hub</p>
-                </div>
-            </div>
-            <button onclick="toggleMobileSidebar()" class="md:hidden text-slate-400 hover:text-white">
-                <i class="fa-solid fa-xmark text-lg"></i>
-            </button>
+    <!-- 側邊導覽欄 Sidebar -->
+    <aside class="w-full md:w-80 bg-white border-r border-slate-200 flex flex-col shrink-0">
+        <div class="p-5 border-b border-slate-200">
+            <h1 class="text-xl font-bold text-slate-900 flex items-center gap-2">
+                ⚡ 電路學學習歷程
+            </h1>
+            <p class="text-xs text-slate-500 mt-1">自主學習與作業解題紀錄系統</p>
         </div>
 
-        <!-- Unit List / Chapters -->
-        <div class="flex-1 overflow-y-auto p-4 space-y-6">
-            <div>
-                <div class="flex items-center justify-between text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3 px-2">
-                    <span>單元章節列表</span>
-                    <button onclick="openAddModal('unit')" class="text-indigo-400 hover:text-indigo-300 text-xs flex items-center gap-1">
-                        <i class="fa-solid fa-plus"></i> 新增單元
-                    </button>
-                </div>
-                <nav id="chapter-nav" class="space-y-1">
-                    <!-- Nav items populated via JS -->
-                </nav>
-            </div>
+        <!-- 章節單元選單 -->
+        <div class="p-4 flex-1 overflow-y-auto space-y-1" id="chapterNav">
+            <!-- 由 JS 動態生成章節列表 -->
         </div>
 
-        <!-- Sidebar Footer Action -->
-        <div class="p-4 border-t border-slate-800 bg-slate-950/50 space-y-2">
-            <button onclick="openAddModal('homework')" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-medium py-2.5 px-4 rounded-xl shadow-lg shadow-indigo-600/30 transition flex items-center justify-center gap-2 text-sm">
-                <i class="fa-solid fa-file-circle-plus"></i>
-                <span>新增作業紀錄</span>
+        <!-- 側邊欄操作按鈕區 -->
+        <div class="p-4 border-t border-slate-200 space-y-2 bg-slate-50">
+            <button onclick="openAddModal()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg shadow-sm text-sm flex items-center justify-center gap-1 transition">
+                <span>➕</span> 新增作業題目
             </button>
-            <div class="flex gap-2">
-                <button onclick="exportData()" class="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs py-2 rounded-lg transition flex items-center justify-center gap-1">
-                    <i class="fa-solid fa-download"></i> 匯出 JSON
+            <div class="grid grid-cols-2 gap-2">
+                <button onclick="exportData()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-medium py-2 px-2 rounded-lg transition text-center">
+                    📤 匯出 JSON
                 </button>
-                <button onclick="resetDefaultData()" class="bg-slate-800 hover:bg-red-900/50 text-slate-400 hover:text-red-300 text-xs py-2 px-3 rounded-lg transition" title="重置為預設題目">
-                    <i class="fa-solid fa-rotate-left"></i>
+                <button onclick="openImportModal()" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-medium py-2 px-2 rounded-lg transition text-center">
+                    📥 匯入 JSON
                 </button>
             </div>
+            <button onclick="resetDefaultData()" class="w-full bg-slate-200 hover:bg-rose-100 hover:text-rose-600 text-slate-600 text-xs font-medium py-1.5 px-2 rounded-lg transition text-center mt-1">
+                ↺ 重置為預設題目
+            </button>
         </div>
     </aside>
 
-    <!-- Main Content Area -->
-    <div class="flex-1 flex flex-col h-full overflow-hidden">
-        
-        <!-- Top Navbar -->
-        <header class="bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between shadow-sm">
-            <div class="flex items-center space-x-4">
-                <button onclick="toggleMobileSidebar()" class="md:hidden text-slate-600 hover:text-slate-900">
-                    <i class="fa-solid fa-bars text-xl"></i>
-                </button>
-                <div>
-                    <span id="current-chapter-badge" class="bg-indigo-50 text-indigo-700 border border-indigo-200 text-xs px-2.5 py-0.5 rounded-full font-semibold">第一章</span>
-                    <h2 id="current-unit-title" class="text-xl font-bold text-slate-900 mt-1">基本概念 — 習題解析</h2>
-                </div>
+    <!-- 主要內容區 Main Content -->
+    <main class="flex-1 flex flex-col h-screen overflow-hidden">
+        <!-- 頂部列：章節標題與搜尋列 -->
+        <header class="bg-white border-b border-slate-200 p-4 px-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shrink-0">
+            <div>
+                <h2 id="currentChapterTitle" class="text-2xl font-bold text-slate-800">載入中...</h2>
+                <p id="currentChapterDesc" class="text-xs text-slate-500 mt-0.5"></p>
             </div>
-
-            <!-- Search Bar -->
-            <div class="relative w-64 md:w-80">
-                <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 text-sm"></i>
-                <input type="text" id="search-input" oninput="handleSearch()" placeholder="搜尋題號或關鍵字 (例如 1-4)..." 
-                       class="w-full pl-9 pr-4 py-2 bg-slate-100 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition">
+            <div class="relative w-full sm:w-64">
+                <input type="text" id="searchInput" oninput="filterProblems()" placeholder="搜尋題號或關鍵字..." 
+                       class="w-full pl-9 pr-4 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                <span class="absolute left-3 top-2.5 text-slate-400 text-sm">🔍</span>
             </div>
         </header>
 
-        <!-- Dynamic Content Scroll View -->
-        <main class="flex-1 overflow-y-auto p-4 md:p-8 space-y-8 bg-slate-50" id="content-container">
-            <!-- Homework Problem Cards populated by JavaScript -->
-        </main>
-    </div>
+        <!-- 題目內容列表展示區 -->
+        <section class="flex-1 overflow-y-auto p-6 space-y-6" id="problemList">
+            <!-- 由 JS 動態生成題目 -->
+        </section>
+    </main>
 
-    <!-- Modal: Add Homework / Add Unit -->
-    <div id="add-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full overflow-hidden border border-slate-100 transform transition-all">
-            <div class="bg-slate-900 text-white px-6 py-4 flex items-center justify-between">
-                <h3 id="modal-title" class="font-bold text-lg">新增作業題目</h3>
-                <button onclick="closeAddModal()" class="text-slate-400 hover:text-white">
-                    <i class="fa-solid fa-xmark text-lg"></i>
-                </button>
+    <!-- Modal：新增/編輯題目 -->
+    <div id="addModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] flex flex-col overflow-hidden">
+            <div class="p-4 border-b border-slate-200 flex justify-between items-center">
+                <h3 class="text-lg font-bold text-slate-800">新增作業解題紀錄</h3>
+                <button onclick="closeAddModal()" class="text-slate-400 hover:text-slate-600">✕</button>
             </div>
-            
-            <form id="add-form" onsubmit="handleFormSubmit(event)" class="p-6 space-y-4">
-                <input type="hidden" id="modal-type" value="homework">
-
-                <!-- Homework Form Fields -->
-                <div id="homework-fields" class="space-y-4">
+            <div class="p-6 overflow-y-auto space-y-4 flex-1">
+                <div>
+                    <label class="block text-xs font-medium text-slate-700 mb-1">所屬章節</label>
+                    <select id="inputChapter" class="w-full border border-slate-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"></select>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">所屬單元</label>
-                        <select id="form-unit-id" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
-                            <!-- Populated dynamically -->
-                        </select>
-                    </div>
-                    <div class="grid grid-cols-2 gap-3">
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-600 mb-1">題號 (如 2-1)</label>
-                            <input type="text" id="form-prob-id" required placeholder="例如：2-1" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-600 mb-1">分類標籤</label>
-                            <input type="text" id="form-tag" placeholder="例如：KCL/KVL" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
-                        </div>
+                        <label class="block text-xs font-medium text-slate-700 mb-1">題號 (例: 1-4)</label>
+                        <input type="text" id="inputNum" placeholder="1-4" class="w-full border border-slate-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">題目內容 (支援 LaTeX $...$)</label>
-                        <textarea id="form-question" rows="3" required placeholder="請輸入題目內文..." class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 outline-none"></textarea>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">詳細計算推導過程</label>
-                        <textarea id="form-solution" rows="4" required placeholder="請輸入推導過程 HTML/文字..." class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 outline-none"></textarea>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">最終答案簡記</label>
-                        <input type="text" id="form-answer" required placeholder="例如：V = 5 (V)" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
+                        <label class="block text-xs font-medium text-slate-700 mb-1">主題 (選填，例: 庫侖定律)</label>
+                        <input type="text" id="inputTopic" placeholder="庫侖定律應用" class="w-full border border-slate-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
                     </div>
                 </div>
-
-                <!-- New Unit Fields -->
-                <div id="unit-fields" class="space-y-4 hidden">
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">章節編號 (例如：第二章)</label>
-                        <input type="text" id="form-chapter-num" placeholder="例如：第二章" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">單元名稱</label>
-                        <input type="text" id="form-unit-name" placeholder="例如：基本電路定律" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
-                    </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-700 mb-1">題目敘述 (支援 LaTeX，例如 $Q_1 = 2 \times 10^{-4}\text{C}$)</label>
+                    <textarea id="inputQuestion" rows="3" class="w-full border border-slate-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="輸入題目內容..."></textarea>
                 </div>
-
-                <div class="flex justify-end gap-2 pt-2">
-                    <button type="button" onclick="closeAddModal()" class="px-4 py-2 rounded-xl border border-slate-200 text-slate-600 text-sm hover:bg-slate-100 transition">取消</button>
-                    <button type="submit" class="px-5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-medium text-sm transition shadow-md shadow-indigo-600/30">儲存記錄</button>
+                <div>
+                    <label class="block text-xs font-medium text-slate-700 mb-1">詳細解答與推導過程 (支援 HTML & LaTeX)</label>
+                    <textarea id="inputSolution" rows="6" class="w-full border border-slate-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="輸入詳細推導步驟..."></textarea>
                 </div>
-            </form>
+            </div>
+            <div class="p-4 border-t border-slate-200 bg-slate-50 flex justify-end gap-2">
+                <button onclick="closeAddModal()" class="px-4 py-2 border border-slate-300 text-slate-600 rounded-lg text-sm hover:bg-slate-100">取消</button>
+                <button onclick="saveProblem()" class="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700 font-medium">儲存紀錄</button>
+            </div>
         </div>
     </div>
 
+    <!-- Modal：匯入 JSON -->
+    <div id="importModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-xl shadow-xl max-w-md w-full p-6 space-y-4">
+            <h3 class="text-lg font-bold text-slate-800">📥 匯入 JSON 資料備份</h3>
+            <p class="text-xs text-slate-500">選擇匯入模式，並上傳先前提出的 `.json` 檔案：</p>
+            
+            <div class="space-y-2">
+                <label class="flex items-center gap-2 text-sm text-slate-700 cursor-pointer">
+                    <input type="radio" name="importMode" value="merge" checked class="text-blue-600 focus:ring-blue-500">
+                    <span><strong>合併新增</strong> (保留現有資料，僅更新/追加題號)</span>
+                </label>
+                <label class="flex items-center gap-2 text-sm text-slate-700 cursor-pointer">
+                    <input type="radio" name="importMode" value="replace" class="text-blue-600 focus:ring-blue-500">
+                    <span><strong>完全覆蓋</strong> (清空目前資料，替換為匯入內容)</span>
+                </label>
+            </div>
+
+            <div class="mt-2">
+                <input type="file" id="importFileInput" accept=".json" class="block w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+            </div>
+
+            <div class="flex justify-end gap-2 pt-2">
+                <button onclick="closeImportModal()" class="px-4 py-2 border border-slate-300 text-slate-600 rounded-lg text-sm hover:bg-slate-100">取消</button>
+                <button onclick="processImport()" class="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm hover:bg-indigo-700 font-medium">確認匯入</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript 邏輯引擎 -->
     <script>
-        // Default Dataset (Initial homework records)
-        const DEFAULT_DATA = {
-            units: [
+        // 預設預載資料結構 (包含 1-4, 1-5, 1-6, 1-8, 1-10, 1-13)
+        const defaultData = {
+            chapters: [
+                { id: "ch1", title: "第一章 基本概念", desc: "靜電力、庫侖定律、元件特性與基本訊號波形" },
+                { id: "ch2", title: "第二章 基本電路定律", desc: "歐姆定律、克希荷夫電路定律 (KCL/KVL)" },
+                { id: "ch3", title: "第三章 電路分析技術", desc: "節點電壓法、網目電流法與重疊定理" }
+            ],
+            problems: [
                 {
-                    id: "unit-1",
-                    chapter: "第一章",
-                    title: "基本概念 — 習題解析",
-                    problems: [
-                        {
-                            id: "1-4",
-                            tag: "靜電學 / 庫侖定律",
-                            question: "在真空中，若有 $2 \\times 10^{-4}\\text{ C}$ 之正電荷與 $4 \\times 10^{-5}\\text{ C}$ 之負電荷，相距 $3\\text{ m}$，試求其間之靜電力。",
-                            formula: "$$F = k \\cdot \\frac{|q_1 \\cdot q_2|}{r^2}$$ (真空靜電常數 $k \\approx 9 \\times 10^9 \\text{ N}\\cdot\\text{m}^2/\\text{C}^2$)",
-                            solution: `<ol class="list-decimal list-inside space-y-1 text-sm text-slate-700">
-                                <li>已知：$q_1 = +2 \\times 10^{-4}\\text{ C}$，$q_2 = -4 \\times 10^{-5}\\text{ C}$，$r = 3\\text{ m}$。</li>
-                                <li>代入公式：$$F = (9 \\times 10^9) \\times \\frac{(2 \\times 10^{-4}) \\times (4 \\times 10^{-5})}{3^2}$$</li>
-                                <li>計算結果：$$F = 9 \\times 10^9 \\times \\frac{8 \\times 10^{-9}}{9} = 8\\text{ N}$$</li>
-                                <li>方向：正負電荷異性相吸，故作用力為吸引力。</li>
-                            </ol>`,
-                            answer: "$-8\\text{ N}$ （或 $8\\text{ N}$ 吸引力）"
-                        },
-                        {
-                            id: "1-5",
-                            tag: "CGS 靜電單位制",
-                            question: "有 $A$、$B$ 兩帶電球體相距 $20\\text{ cm}$，且已知兩球體間具有 $1\\text{ N}$ 的斥力，若 $A$ 球帶有 $5 \\times 10^3\\text{ SC}$ 的負電荷，試問 $B$ 球所帶電量及電荷種類為何？",
-                            formula: "$$F\\text{(dyne)} = \\frac{|q_A \\cdot q_B|}{r^2\\text{(cm}^2\\text{)}}$$ ($1\\text{ N} = 10^5\\text{ dynes}$)",
-                            solution: `<ol class="list-decimal list-inside space-y-1 text-sm text-slate-700">
-                                <li>單位轉換：作用力 $F = 1\\text{ N} = 10^5\\text{ dynes}$，距離 $r = 20\\text{ cm}$。</li>
-                                <li>已知 $|q_A| = 5 \\times 10^3\\text{ SC}$，代入 CGS 靜電力公式：
-                                    $$10^5 = \\frac{(5 \\times 10^3) \\cdot |q_B|}{20^2}$$
-                                </li>
-                                <li>求解 $|q_B|$：
-                                    $$10^5 = \\frac{5 \\times 10^3 \\cdot |q_B|}{400} \\implies 10^5 = 12.5 \\cdot |q_B| \\implies |q_B| = 8000\\text{ SC} = 8 \\times 10^3\\text{ SC}$$
-                                </li>
-                                <li>極性判斷：兩球間為斥力（同性相斥），$A$ 球為負電荷，故 $B$ 球亦為<b>負電荷</b>。</li>
-                            </ol>`,
-                            answer: "$-8 \\times 10^3\\text{ SC}$，負電荷"
-                        },
-                        {
-                            id: "1-6",
-                            tag: "比例分析",
-                            question: "兩帶電金屬球相距 $2\\text{ cm}$，已知其間之斥力為 $10\\text{ 達因}$，若其中一帶電體之電荷加倍，兩球之距離亦加倍時，斥力應為若干？",
-                            formula: "",
-                            solution: `<ol class="list-decimal list-inside space-y-1 text-sm text-slate-700">
-                                <li>原靜電力：$$F_1 = k \\frac{q_1 q_2}{r_1^2} = 10\\text{ dynes}$$</li>
-                                <li>條件變更：電荷加倍 $q_1' = 2 q_1$，距離加倍 $r_2 = 2 r_1$。</li>
-                                <li>新靜電力 $F_2$：
-                                    $$F_2 = k \\frac{(2 q_1) q_2}{(2 r_1)^2} = k \\frac{2 q_1 q_2}{4 r_1^2} = \\frac{2}{4} \\left( k \\frac{q_1 q_2}{r_1^2} \\right) = \\frac{1}{2} F_1$$
-                                </li>
-                                <li>代入數據：$$F_2 = \\frac{1}{2} \\times 10\\text{ 達因} = 5\\text{ 達因}$$</li>
-                            </ol>`,
-                            answer: "$5\\text{ 達因}$"
-                        },
-                        {
-                            id: "1-8",
-                            tag: "直流電路分析",
-                            question: "下圖所示電路，試求跨於線性電阻 $R_1\\ 1\\Omega$ 兩端的電壓。",
-                            svgDiagram: `<div class="my-3 flex justify-center bg-white p-3 rounded-lg border border-slate-200">
-                                <svg width="300" height="150" viewBox="0 0 320 180" class="max-w-full">
-                                    <circle cx="60" cy="90" r="20" stroke="#1e293b" stroke-width="2" fill="white"/>
-                                    <text x="60" y="85" text-anchor="middle" font-size="14" font-weight="bold">+</text>
-                                    <text x="60" y="103" text-anchor="middle" font-size="14" font-weight="bold">-</text>
-                                    <text x="25" y="95" font-size="14" font-weight="bold" fill="#2563eb">2V</text>
-                                    <path d="M 160 40 L 160 70 L 153 75 L 167 83 L 153 91 L 167 99 L 153 107 L 160 112 L 160 140" stroke="#1e293b" stroke-width="2" fill="none"/>
-                                    <text x="180" y="80" font-size="13" font-weight="bold">$+$</text>
-                                    <text x="180" y="95" font-size="13" font-weight="bold" fill="#059669">$R_1$</text>
-                                    <text x="180" y="110" font-size="12" fill="#059669">$1\\Omega$</text>
-                                    <text x="180" y="125" font-size="13" font-weight="bold">$-$</text>
-                                    <path d="M 160 40 L 200 40 L 205 33 L 213 47 L 221 33 L 229 47 L 237 33 L 242 40 L 260 40" stroke="#1e293b" stroke-width="2" fill="none"/>
-                                    <text x="220" y="25" text-anchor="middle" font-size="13" font-weight="bold">$R_2 = 3\\Omega$</text>
-                                    <path d="M 260 40 L 260 70" stroke="#1e293b" stroke-width="2" fill="none"/>
-                                    <circle cx="260" cy="90" r="20" stroke="#1e293b" stroke-width="2" fill="white"/>
-                                    <path d="M 260 100 L 260 80" stroke="#1e293b" stroke-width="2" fill="none"/>
-                                    <polygon points="260,78 255,86 265,86" fill="#1e293b"/>
-                                    <text x="290" y="95" font-size="14" font-weight="bold">1A</text>
-                                    <path d="M 60 40 L 160 40" stroke="#1e293b" stroke-width="2" fill="none"/>
-                                    <path d="M 60 140 L 260 140 L 260 110" stroke="#1e293b" stroke-width="2" fill="none"/>
-                                    <path d="M 60 40 L 60 70" stroke="#1e293b" stroke-width="2" fill="none"/>
-                                    <path d="M 60 110 L 60 140" stroke="#1e293b" stroke-width="2" fill="none"/>
-                                    <circle cx="160" cy="40" r="3" fill="#1e293b"/>
-                                    <circle cx="160" cy="140" r="3" fill="#1e293b"/>
-                                </svg>
-                            </div>`,
-                            solution: `<ol class="list-decimal list-inside space-y-1 text-sm text-slate-700">
-                                <li>觀察電路結構：獨立電壓源 $2\\text{V}$ 直接並聯跨接於電阻 $R_1$ 上下兩節點。</li>
-                                <li>根據理想電壓源性質：理想電壓源兩端會強行維持指定之固定電壓，不受右側並聯支路影響。</li>
-                                <li>因此，$R_1$ 兩端電壓即為理想電壓源之電壓 $v_{R1} = 2\\text{ V}$。</li>
-                            </ol>`,
-                            answer: "$2\\text{ (V)}$"
-                        },
-                        {
-                            id: "1-10",
-                            tag: "RLC 動態響應",
-                            question: "下圖所示之電路是由線性非時變元件所組成，其輸入電流 $i(t) = e^{-\\frac{1}{2}t}\\text{ A}$，試求當 $t > 0$ 時之 $v_R(t)$、$v_C(t)$ 和 $v_L(t)$。其中 $R = 10\\Omega$，$L = 5\\text{H}$，$C = 0.1\\text{F}$ 且 $v_C(0) = 0$。",
-                            formula: "$$v_R(t) = R \\cdot i(t), \\quad v_L(t) = L \\cdot \\frac{di(t)}{dt}, \\quad v_C(t) = \\frac{1}{C}\\int_{0}^{t} i(\\tau)d\\tau + v_C(0)$$",
-                            solution: `<div class="space-y-2 text-sm text-slate-700">
-                                <p><b>(1) 電阻電壓 $v_R(t)$：</b><br>$$v_R(t) = 10 \\cdot e^{-\\frac{1}{2}t} = 10e^{-\\frac{1}{2}t}\\text{ V}$$</p>
-                                <p><b>(2) 電感電壓 $v_L(t)$：</b><br>$$v_L(t) = 5 \\cdot \\frac{d}{dt}\\left( e^{-\\frac{1}{2}t} \\right) = 5 \\cdot \\left( -\\frac{1}{2}e^{-\\frac{1}{2}t} \\right) = -2.5e^{-\\frac{1}{2}t}\\text{ V}$$</p>
-                                <p><b>(3) 電容電壓 $v_C(t)$：</b><br>
-                                $$\\frac{1}{C} = 10 \\implies v_C(t) = 10 \\int_{0}^{t} e^{-\\frac{1}{2}\\tau} d\\tau = 10 \\left[ -2e^{-\\frac{1}{2}\\tau} \\right]_{0}^{t} = 20 - 20e^{-\\frac{1}{2}t}\\text{ V}$$</p>
-                            </div>`,
-                            answer: "$v_R(t) = 10e^{-\\frac{1}{2}t}\\text{ V}, \\quad v_L(t) = -2.5e^{-\\frac{1}{2}t}\\text{ V}, \\quad v_C(t) = 20 - 20e^{-\\frac{1}{2}t}\\text{ V}$"
-                        },
-                        {
-                            id: "1-13",
-                            tag: "奇異函數與波形繪製",
-                            question: "試畫出下列各函數之波形：(1) $3u(t) - 3u(t-2)$, (5) $\\delta(t) - \\delta(t-1) + \\delta(t-2)$, (6) $u(t) - 2u(t-1)$, (8) $u(t-1) + u(t-2)$, (9) $r(t)u(t) - r(t-1)u(t-1)$, (10) $P_{1/2}(t-2)$",
-                            solution: `<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
-                                <div class="bg-white p-3 rounded-lg border border-slate-200">
-                                    <p class="font-bold text-xs text-indigo-700 mb-1">(1) $f_1(t) = 3u(t) - 3u(t-2)$</p>
-                                    <div class="flex justify-center">
-                                        <svg width="220" height="110" viewBox="0 0 260 130"><line x1="30" y1="100" x2="230" y2="100" stroke="#64748b" stroke-width="1.5"/><line x1="50" y1="115" x2="50" y2="15" stroke="#64748b" stroke-width="1.5"/><text x="235" y="104" font-size="12">t</text><text x="45" y="12" font-size="12">f(t)</text><text x="40" y="112" font-size="10">0</text><line x1="130" y1="97" x2="130" y2="103" stroke="#64748b"/><text x="127" y="115" font-size="10">2</text><line x1="47" y1="40" x2="53" y2="40" stroke="#64748b"/><text x="35" y="44" font-size="10">3</text><path d="M 30 100 L 50 100 L 50 40 L 130 40 L 130 100 L 220 100" stroke="#2563eb" stroke-width="2.5" fill="none"/></svg>
-                                    </div>
-                                </div>
-                                <div class="bg-white p-3 rounded-lg border border-slate-200">
-                                    <p class="font-bold text-xs text-indigo-700 mb-1">(5) $f_5(t) = \\delta(t) - \\delta(t-1) + \\delta(t-2)$</p>
-                                    <div class="flex justify-center">
-                                        <svg width="220" height="110" viewBox="0 0 260 150"><line x1="30" y1="75" x2="230" y2="75" stroke="#64748b" stroke-width="1.5"/><line x1="60" y1="135" x2="60" y2="15" stroke="#64748b" stroke-width="1.5"/><text x="235" y="79" font-size="12">t</text><text x="55" y="12" font-size="12">f(t)</text><text x="50" y="87" font-size="10">0</text><line x1="120" y1="72" x2="120" y2="78" stroke="#64748b"/><text x="117" y="87" font-size="10">1</text><line x1="180" y1="72" x2="180" y2="78" stroke="#64748b"/><text x="177" y="87" font-size="10">2</text><line x1="60" y1="75" x2="60" y2="30" stroke="#dc2626" stroke-width="2"/><polygon points="60,25 56,33 64,33" fill="#dc2626"/><text x="68" y="32" font-size="10" fill="#dc2626">1</text><line x1="120" y1="75" x2="120" y2="120" stroke="#dc2626" stroke-width="2"/><polygon points="120,125 116,117 124,117" fill="#dc2626"/><text x="128" y="122" font-size="10" fill="#dc2626">-1</text><line x1="180" y1="75" x2="180" y2="30" stroke="#dc2626" stroke-width="2"/><polygon points="180,25 176,33 184,33" fill="#dc2626"/><text x="188" y="32" font-size="10" fill="#dc2626">1</text></svg>
-                                    </div>
-                                </div>
-                                <div class="bg-white p-3 rounded-lg border border-slate-200">
-                                    <p class="font-bold text-xs text-indigo-700 mb-1">(6) $f_6(t) = u(t) - 2u(t-1)$</p>
-                                    <div class="flex justify-center">
-                                        <svg width="220" height="110" viewBox="0 0 260 140"><line x1="30" y1="70" x2="230" y2="70" stroke="#64748b" stroke-width="1.5"/><line x1="50" y1="130" x2="50" y2="15" stroke="#64748b" stroke-width="1.5"/><text x="235" y="74" font-size="12">t</text><text x="45" y="12" font-size="12">f(t)</text><text x="38" y="82" font-size="10">0</text><line x1="47" y1="35" x2="53" y2="35" stroke="#64748b"/><text x="35" y="38" font-size="10">1</text><line x1="47" y1="105" x2="53" y2="105" stroke="#64748b"/><text x="30" y="108" font-size="10">-1</text><line x1="120" y1="67" x2="120" y2="73" stroke="#64748b"/><text x="117" y="82" font-size="10">1</text><path d="M 30 70 L 50 70 L 50 35 L 120 35 L 120 105 L 220 105" stroke="#2563eb" stroke-width="2.5" fill="none"/></svg>
-                                    </div>
-                                </div>
-                                <div class="bg-white p-3 rounded-lg border border-slate-200">
-                                    <p class="font-bold text-xs text-indigo-700 mb-1">(8) $f_8(t) = u(t-1) + u(t-2)$</p>
-                                    <div class="flex justify-center">
-                                        <svg width="220" height="110" viewBox="0 0 260 140"><line x1="30" y1="110" x2="230" y2="110" stroke="#64748b" stroke-width="1.5"/><line x1="50" y1="125" x2="50" y2="15" stroke="#64748b" stroke-width="1.5"/><text x="235" y="114" font-size="12">t</text><text x="45" y="12" font-size="12">f(t)</text><text x="38" y="122" font-size="10">0</text><line x1="47" y1="70" x2="53" y2="70" stroke="#64748b"/><text x="35" y="74" font-size="10">1</text><line x1="47" y1="30" x2="53" y2="30" stroke="#64748b"/><text x="35" y="34" font-size="10">2</text><line x1="100" y1="107" x2="100" y2="113" stroke="#64748b"/><text x="97" y="122" font-size="10">1</text><line x1="160" y1="107" x2="160" y2="113" stroke="#64748b"/><text x="157" y="122" font-size="10">2</text><path d="M 30 110 L 100 110 L 100 70 L 160 70 L 160 30 L 220 30" stroke="#2563eb" stroke-width="2.5" fill="none"/></svg>
-                                    </div>
-                                </div>
-                                <div class="bg-white p-3 rounded-lg border border-slate-200">
-                                    <p class="font-bold text-xs text-indigo-700 mb-1">(9) $f_9(t) = r(t)u(t) - r(t-1)u(t-1)$</p>
-                                    <div class="flex justify-center">
-                                        <svg width="220" height="110" viewBox="0 0 260 130"><line x1="30" y1="100" x2="230" y2="100" stroke="#64748b" stroke-width="1.5"/><line x1="50" y1="115" x2="50" y2="15" stroke="#64748b" stroke-width="1.5"/><text x="235" y="104" font-size="12">t</text><text x="45" y="12" font-size="12">f(t)</text><text x="38" y="112" font-size="10">0</text><line x1="47" y1="40" x2="53" y2="40" stroke="#64748b"/><text x="35" y="44" font-size="10">1</text><line x1="120" y1="97" x2="120" y2="103" stroke="#64748b"/><text x="117" y="112" font-size="10">1</text><path d="M 30 100 L 50 100 L 120 40 L 220 40" stroke="#2563eb" stroke-width="2.5" fill="none"/><line x1="120" y1="40" x2="120" y2="100" stroke="#cbd5e1" stroke-dasharray="3,3"/></svg>
-                                    </div>
-                                </div>
-                                <div class="bg-white p-3 rounded-lg border border-slate-200">
-                                    <p class="font-bold text-xs text-indigo-700 mb-1">(10) $f_{10}(t) = P_{1/2}(t-2)$</p>
-                                    <div class="flex justify-center">
-                                        <svg width="220" height="110" viewBox="0 0 280 130"><line x1="30" y1="100" x2="260" y2="100" stroke="#64748b" stroke-width="1.5"/><line x1="50" y1="115" x2="50" y2="15" stroke="#64748b" stroke-width="1.5"/><text x="265" y="104" font-size="12">t</text><text x="45" y="12" font-size="12">f(t)</text><text x="38" y="112" font-size="10">0</text><line x1="47" y1="40" x2="53" y2="40" stroke="#64748b"/><text x="35" y="44" font-size="10">1</text><line x1="130" y1="97" x2="130" y2="103" stroke="#64748b"/><text x="118" y="115" font-size="9">1.75</text><line x1="170" y1="97" x2="170" y2="103" stroke="#64748b"/><text x="166" y="115" font-size="9">2</text><line x1="210" y1="97" x2="210" y2="103" stroke="#64748b"/><text x="200" y="115" font-size="9">2.25</text><path d="M 30 100 L 130 100 L 130 40 L 210 40 L 210 100 L 250 100" stroke="#2563eb" stroke-width="2.5" fill="none"/><line x1="170" y1="40" x2="170" y2="100" stroke="#cbd5e1" stroke-dasharray="3,3"/></svg>
-                                    </div>
-                                </div>
-                            </div>`,
-                            answer: "詳見各小題 SVG 波形圖"
-                        }
-                    ]
+                    id: "p1-4",
+                    chapterId: "ch1",
+                    num: "1-4",
+                    topic: "庫侖靜電力計算",
+                    question: "在真空中，若有 $2 \\times 10^{-4}\\text{ C}$ 之正電荷與 $4 \\times 10^{-5}\\text{ C}$ 之負電荷，相距 $3\\text{ m}$，試求其間之靜電力。",
+                    solution: `
+                        <p class="mb-2"><strong>已知條件：</strong> $Q_1 = +2 \\times 10^{-4}\\text{ C}$, $Q_2 = -4 \\times 10^{-5}\\text{ C}$, 距離 $r = 3\\text{ m}$, 靜電力常數 $k = 9 \\times 10^9\\text{ N}\\cdot\\text{m}^2/\\text{C}^2$。</p>
+                        <p class="mb-2">根據庫侖定律公式：</p>
+                        <p class="my-2 bg-slate-50 p-2 rounded text-center">$$F = k \\frac{|Q_1 Q_2|}{r^2}$$</p>
+                        <p class="mb-2">代入數值：</p>
+                        <p class="my-2 bg-slate-50 p-2 rounded text-center">$$F = (9 \\times 10^9) \\times \\frac{(2 \\times 10^{-4}) \\times (4 \\times 10^{-5})}{3^2} = 9 \\times 10^9 \\times \\frac{8 \\times 10^{-9}}{9} = 8\\text{ N}$$</p>
+                        <p class="text-emerald-700 font-medium">答：$8\\text{ N}$ 吸引力（正負電荷相吸）。</p>
+                    `
                 },
                 {
-                    id: "unit-2",
-                    chapter: "第二章",
-                    title: "基本電路定律 — 預留單元",
-                    problems: [
-                        {
-                            id: "2-1",
-                            tag: "KVL / KCL",
-                            question: "（預留範例題目）試求迴路電流與節點電壓。",
-                            formula: "$$\\sum I_{in} = \\sum I_{out}$$",
-                            solution: "<p class='text-sm text-slate-600'>此處可由下方「新增作業記錄」按鈕填入第二章作業！</p>",
-                            answer: "預留區"
-                        }
-                    ]
+                    id: "p1-5",
+                    chapterId: "ch1",
+                    num: "1-5",
+                    topic: "靜電單位 (SC) 與靜電力",
+                    question: "有 $A$、$B$ 兩帶電球體相距 $20\\text{ cm}$，且已知兩球體間具有 $1\\text{ N}$ 的斥力，若 $A$ 球帶有 $5 \\times 10^3\\text{ SC}$ 的負電荷，試問 $B$ 球所帶電量及電荷種類為何？",
+                    solution: `
+                        <p class="mb-2"><strong>觀念解析：</strong> 1 Statcoulomb (SC / 靜庫侖) 於 CGS 制中，定義為兩相距 $1\\text{ cm}$ 之相等電荷受力 $1\\text{ dyn}$。單位換算關係為：$1\\text{ N} = 10^5\\text{ dyn}$。</p>
+                        <p class="mb-2">在 CGS 制下庫侖定律公式為 $F(\\text{dyn}) = \\frac{|q_A q_B|}{r^2(\\text{cm}^2)}$。</p>
+                        <p class="mb-2">已知 $F = 1\\text{ N} = 10^5\\text{ dyn}$，$r = 20\\text{ cm}$，$q_A = -5 \\times 10^3\\text{ SC}$：</p>
+                        <p class="my-2 bg-slate-50 p-2 rounded text-center">$$10^5 = \\frac{(5 \\times 10^3) \\cdot |q_B|}{20^2} = \\frac{5000 \\cdot |q_B|}{400} = 12.5 \\cdot |q_B|$$</p>
+                        <p class="my-2 bg-slate-50 p-2 rounded text-center">$$|q_B| = \\frac{10^5}{12.5} = 8000\\text{ SC} = 8 \\times 10^3\\text{ SC}$$</p>
+                        <p class="text-emerald-700 font-medium">答：因為相互為斥力，故電性相同；$B$ 球帶有 $-8 \\times 10^3\\text{ SC}$ 之負電荷。</p>
+                    `
+                },
+                {
+                    id: "p1-6",
+                    chapterId: "ch1",
+                    num: "1-6",
+                    topic: "庫侖定律比例推導",
+                    question: "兩帶電金屬球相距 $2\\text{ cm}$，已知其間之斥力為 $10\\text{ 達因}$，若其中一帶電體之電荷加倍，兩球之距離亦加倍時，斥力應為若干？",
+                    solution: `
+                        <p class="mb-2"><strong>比例推導：</strong> 根據庫侖定律 $F = k \\frac{q_1 q_2}{r^2}$，受力大小與電荷乘積成正比，與距離平方成反比。</p>
+                        <p class="mb-2">設改變後的斥力為 $F'$：</p>
+                        <p class="my-2 bg-slate-50 p-2 rounded text-center">$$F' = k \\frac{(2q_1) \\cdot q_2}{(2r)^2} = k \\frac{2 q_1 q_2}{4 r^2} = \\frac{2}{4} \\left(k \\frac{q_1 q_2}{r^2}\\right) = \\frac{1}{2} F$$</p>
+                        <p class="my-2 bg-slate-50 p-2 rounded text-center">$$F' = \\frac{1}{2} \\times 10\\text{ dyn} = 5\\text{ dyn}$$</p>
+                        <p class="text-emerald-700 font-medium">答：$5\\text{ 達因 (dyn)}$。</p>
+                    `
+                },
+                {
+                    id: "p1-8",
+                    chapterId: "ch1",
+                    num: "1-8",
+                    topic: "理想電源與跨壓分析",
+                    question: "下圖所示電路，試求跨於線性電阻 $R_1\\ 1\\Omega$ 兩端的電壓。",
+                    solution: `
+                        <p class="mb-2"><strong>電路觀念：</strong> 電路中包含一個 $2\\text{V}$ 的獨立電壓源、一個 $1\\Omega$ 的線性電阻 $R_1$、一個 $3\\Omega$ 的電阻 $R_2$ 與一個 $1\\text{A}$ 的電流源。</p>
+                        <p class="mb-2">觀察電路拓樸結構，$2\\text{V}$ 獨立電壓源直接並聯於電阻 $R_1$ 兩端節點。</p>
+                        <p class="mb-2">根據理想電壓源特性：不論兩端連接何種電路元件，其兩端電壓恆保持等於電源輸出電壓。</p>
+                        <p class="my-2 bg-slate-50 p-2 rounded text-center">$$V_{R1} = V_S = 2\\text{ V}$$</p>
+                        <p class="text-emerald-700 font-medium">答：$2\\text{ (V)}$。</p>
+                    `
+                },
+                {
+                    id: "p1-10",
+                    chapterId: "ch1",
+                    num: "1-10",
+                    topic: "非時變元件時域 $v-i$ 關係",
+                    question: "下圖所示之電路是由線性非時變元件所組成，其輸入電流 $i(t) = e^{-\\frac{1}{2}t}\\text{ A}$，試求當 $t > 0$ 時之 $v_R(t)$、$v_C(t)$ 和 $v_L(t)$。其中 $R = 10\\Omega$，$L = 5\\text{H}$，$C = 0.1\\text{F}$ 且 $v_C(0) = 0$。",
+                    solution: `
+                        <div class="space-y-3">
+                            <div>
+                                <h5 class="font-bold text-slate-700">1. 計算電組電壓 $v_R(t)$：</h5>
+                                <p>利用歐姆定律：$$v_R(t) = R \\cdot i(t) = 10 \\cdot e^{-\\frac{1}{2}t} = 10e^{-\\frac{1}{2}t}\\text{ V}$$</p>
+                            </div>
+                            <div>
+                                <h5 class="font-bold text-slate-700">2. 計算電感電壓 $v_L(t)$：</h5>
+                                <p>利用電感微分特性 $v_L(t) = L \\frac{di(t)}{dt}$：</p>
+                                <p>$$v_L(t) = 5 \\cdot \\frac{d}{dt}\\left(e^{-\\frac{1}{2}t}\\right) = 5 \\cdot \\left(-\\frac{1}{2}e^{-\\frac{1}{2}t}\\right) = -2.5e^{-\\frac{1}{2}t}\\text{ V}$$</p>
+                            </div>
+                            <div>
+                                <h5 class="font-bold text-slate-700">3. 計算電容電壓 $v_C(t)$：</h5>
+                                <p>利用電容積分特性 $v_C(t) = \\frac{1}{C} \\int_0^t i(\\tau) d\\tau + v_C(0)$：</p>
+                                <p>$$v_C(t) = \\frac{1}{0.1} \\int_0^t e^{-\\frac{1}{2}\\tau} d\\tau + 0 = 10 \\cdot \\left[ -2e^{-\\frac{1}{2}\\tau} \\right]_0^t = -20 \\left( e^{-\\frac{1}{2}t} - 1 \\right) = 20 - 20e^{-\\frac{1}{2}t}\\text{ V}$$</p>
+                            </div>
+                            <p class="text-emerald-700 font-medium">答：$v_R(t) = 10e^{-\\frac{1}{2}t}\\text{ V}$， $v_L(t) = -2.5e^{-\\frac{1}{2}t}\\text{ V}$， $v_C(t) = 20 - 20e^{-\\frac{1}{2}t}\\text{ V}$。</p>
+                        </div>
+                    `
+                },
+                {
+                    id: "p1-13",
+                    chapterId: "ch1",
+                    num: "1-13",
+                    topic: "奇異函數與訊號波形繪製",
+                    question: "試畫出下列各函數之波形：(1) $3u(t) - 3u(t-2)$、(5) $\\delta(t) - \\delta(t-1) + \\delta(t-2)$、(6) $u(t) - 2u(t-1)$、(8) $u(t-1) + u(t-2)$、(9) $r(t)u(t) - r(t-1)u(t-1)$、(10) $P_{1/2}(t-2)$",
+                    solution: `
+                        <div class="space-y-4">
+                            <div>
+                                <h5 class="font-bold text-slate-700">(1) $3u(t) - 3u(t-2)$</h5>
+                                <p class="text-xs text-slate-500 mb-1">寬度為 2，振幅高度為 3 的矩形脈波。</p>
+                                <div class="bg-slate-50 p-2 rounded border font-mono text-xs">
+                                    f(t) ↑<br>
+                                     3  |──────┐<br>
+                                        |      |<br>
+                                     0 ─┴──────┴──────&gt; t<br>
+                                        0      2
+                                </div>
+                            </div>
+                            <div>
+                                <h5 class="font-bold text-slate-700">(5) $\\delta(t) - \\delta(t-1) + \\delta(t-2)$</h5>
+                                <p class="text-xs text-slate-500 mb-1">三個在 $t=0, 1, 2$ 處的單位脈衝。</p>
+                                <div class="bg-slate-50 p-2 rounded border font-mono text-xs">
+                                     ↑ (1)     ↑ (1)<br>
+                                    ─┼─────────┼───────&gt; t<br>
+                                     0 │       2<br>
+                                       ↓ (-1) [t=1]
+                                </div>
+                            </div>
+                            <div>
+                                <h5 class="font-bold text-slate-700">(6) $u(t) - 2u(t-1)$</h5>
+                                <p class="text-xs text-slate-500 mb-1">$t \\in [0, 1)$ 為 1，在 $t \\ge 1$ 降至 -1。</p>
+                                <div class="bg-slate-50 p-2 rounded border font-mono text-xs">
+                                     1  |──┐<br>
+                                     0 ─┼──┼──────&gt; t<br>
+                                    -1  |  └───...<br>
+                                        0  1
+                                </div>
+                            </div>
+                            <div>
+                                <h5 class="font-bold text-slate-700">(8) $u(t-1) + u(t-2)$</h5>
+                                <p class="text-xs text-slate-500 mb-1">$t &lt; 1$ 為 0；$1 \\le t &lt; 2$ 為 1；$t \\ge 2$ 階梯上升至 2。</p>
+                                <div class="bg-slate-50 p-2 rounded border font-mono text-xs">
+                                     2  |         ┌────...<br>
+                                     1  |    ┌────┘<br>
+                                     0 ─┴────┴─────────&gt; t<br>
+                                        0    1    2
+                                </div>
+                            </div>
+                            <div>
+                                <h5 class="font-bold text-slate-700">(9) $r(t)u(t) - r(t-1)u(t-1)$</h5>
+                                <p class="text-xs text-slate-500 mb-1">$t \\in [0, 1]$ 斜率為 1 上升，過 $t=1$ 後斜率歸 0 並維持於 1。</p>
+                                <div class="bg-slate-50 p-2 rounded border font-mono text-xs">
+                                     1  |    ┌────────...<br>
+                                        |  ╱<br>
+                                     0 ─┴─┴───────────&gt; t<br>
+                                        0 1
+                                </div>
+                            </div>
+                            <div>
+                                <h5 class="font-bold text-slate-700">(10) $P_{1/2}(t-2)$</h5>
+                                <p class="text-xs text-slate-500 mb-1">寬度為 $0.5$（半徑為 $0.25$）、中心點於 $t=2$ 的矩形脈波 ($t \\in [1.75, 2.25]$ 高度為 1)。</p>
+                                <div class="bg-slate-50 p-2 rounded border font-mono text-xs">
+                                     1  |     ┌──┐<br>
+                                     0 ─┴─────┴──┴─────&gt; t<br>
+                                        0    1.75 2.25
+                                </div>
+                            </div>
+                        </div>
+                    `
                 }
             ]
         };
 
-        // State Management
+        // 應用程式狀態 State
         let appData = loadData();
-        let currentUnitId = appData.units[0].id;
+        let currentChapterId = "ch1";
 
+        // 本地儲存讀取/寫入
         function loadData() {
-            const saved = localStorage.getItem("circuit_notebook_data");
-            return saved ? JSON.parse(saved) : DEFAULT_DATA;
+            const saved = localStorage.getItem("circuit_homework_data");
+            if (saved) {
+                try { return JSON.parse(saved); } catch(e) { console.error(e); }
+            }
+            return defaultData;
         }
 
         function saveData() {
-            localStorage.setItem("circuit_notebook_data", JSON.stringify(appData));
+            localStorage.setItem("circuit_homework_data", JSON.stringify(appData));
         }
 
-        function resetDefaultData() {
-            if (confirm("確定要重置所有題目資料回預設值嗎？自訂新增的作業將會清除。")) {
-                appData = DEFAULT_DATA;
-                saveData();
-                renderNav();
-                switchUnit(appData.units[0].id);
+        // 畫面渲染函數
+        function renderSidebar() {
+            const nav = document.getElementById("chapterNav");
+            nav.innerHTML = appData.chapters.map(ch => {
+                const count = appData.problems.filter(p => p.chapterId === ch.id).length;
+                const isActive = ch.id === currentChapterId;
+                return `
+                    <button onclick="switchChapter('${ch.id}')" 
+                            class="w-full text-left p-3 rounded-lg text-sm transition flex items-center justify-between ${isActive ? 'tab-active font-semibold shadow-sm' : 'tab-inactive'}">
+                        <span class="truncate">${ch.title}</span>
+                        <span class="text-xs px-2 py-0.5 rounded-full ${isActive ? 'bg-blue-800 text-white' : 'bg-slate-200 text-slate-600'}">${count} 題</span>
+                    </button>
+                `;
+            }).join('');
+        }
+
+        function renderProblems(filterText = "") {
+            const list = document.getElementById("problemList");
+            const currentCh = appData.chapters.find(c => c.id === currentChapterId);
+            
+            document.getElementById("currentChapterTitle").innerText = currentCh ? currentCh.title : "作業紀錄";
+            document.getElementById("currentChapterDesc").innerText = currentCh ? currentCh.desc : "";
+
+            let problems = appData.problems.filter(p => p.chapterId === currentChapterId);
+
+            if (filterText.trim() !== "") {
+                const query = filterText.toLowerCase();
+                problems = problems.filter(p => 
+                    p.num.toLowerCase().includes(query) || 
+                    (p.topic && p.topic.toLowerCase().includes(query)) ||
+                    p.question.toLowerCase().includes(query)
+                );
             }
-        }
-
-        // Render Sidebar Navigation
-        function renderNav() {
-            const nav = document.getElementById("chapter-nav");
-            nav.innerHTML = appData.units.map(unit => `
-                <button onclick="switchUnit('${unit.id}')" 
-                        class="w-full text-left px-3 py-2.5 rounded-xl transition flex items-center justify-between text-sm ${unit.id === currentUnitId ? 'bg-indigo-600/20 text-indigo-300 font-semibold border border-indigo-500/30' : 'hover:bg-slate-800 text-slate-400'}">
-                    <div class="truncate">
-                        <span class="text-xs px-1.5 py-0.5 rounded bg-slate-800 mr-1.5 text-slate-300">${unit.chapter}</span>
-                        <span>${unit.title.split('—')[0]}</span>
-                    </div>
-                    <span class="text-xs bg-slate-800 px-2 py-0.5 rounded-full text-slate-400">${unit.problems.length} 題</span>
-                </button>
-            `).join('');
-
-            // Update Select Options in Modal
-            const select = document.getElementById("form-unit-id");
-            select.innerHTML = appData.units.map(u => `<option value="${u.id}">${u.chapter} - ${u.title}</option>`).join('');
-        }
-
-        // Switch Active Unit
-        function switchUnit(unitId) {
-            currentUnitId = unitId;
-            renderNav();
-            const unit = appData.units.find(u => u.id === unitId);
-            if (!unit) return;
-
-            document.getElementById("current-chapter-badge").innerText = unit.chapter;
-            document.getElementById("current-unit-title").innerText = unit.title;
-
-            renderProblems(unit.problems);
-            // Close mobile drawer if open
-            document.getElementById("sidebar").classList.add("-translate-x-full");
-            document.getElementById("sidebar-backdrop").classList.add("hidden");
-        }
-
-        // Render Problems in Main View
-        function renderProblems(problems) {
-            const container = document.getElementById("content-container");
 
             if (problems.length === 0) {
-                container.innerHTML = `
-                    <div class="text-center py-16 text-slate-400">
-                        <i class="fa-solid fa-folder-open text-4xl mb-3"></i>
-                        <p>這個單元目前還沒有作業記錄喔！</p>
-                        <button onclick="openAddModal('homework')" class="mt-3 text-sm text-indigo-600 hover:underline">立即新增題目</button>
-                    </div>`;
+                list.innerHTML = `
+                    <div class="text-center py-12 text-slate-400 bg-white rounded-xl border border-dashed border-slate-300">
+                        <p class="text-lg font-medium">目前尚無相關題目</p>
+                        <p class="text-xs mt-1">點擊側邊欄「新增作業題目」加入解題內容</p>
+                    </div>
+                `;
                 return;
             }
 
-            container.innerHTML = problems.map(p => `
-                <article class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-6 transition hover:shadow-md">
-                    <div class="flex items-center justify-between border-b border-slate-100 pb-3 mb-4">
-                        <div class="flex items-center space-x-2">
-                            <span class="bg-indigo-600 text-white font-bold text-sm px-3 py-1 rounded-xl shadow-sm">題目 ${p.id}</span>
-                            ${p.tag ? `<span class="bg-slate-100 text-slate-600 text-xs px-2.5 py-1 rounded-lg border border-slate-200 font-medium">${p.tag}</span>` : ''}
+            list.innerHTML = problems.map(p => `
+                <article class="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden hover:shadow-md transition">
+                    <div class="bg-slate-50 px-6 py-3 border-b border-slate-200 flex justify-between items-center">
+                        <div class="flex items-center gap-2">
+                            <span class="bg-blue-600 text-white font-bold text-xs px-2.5 py-1 rounded-md">題號 ${p.num}</span>
+                            ${p.topic ? `<span class="text-xs font-semibold text-slate-600 bg-slate-200 px-2 py-0.5 rounded">${p.topic}</span>` : ''}
                         </div>
-                        <button onclick="deleteProblem('${p.id}')" class="text-slate-300 hover:text-red-500 text-xs transition" title="刪除題目">
-                            <i class="fa-solid fa-trash"></i>
-                        </button>
+                        <button onclick="deleteProblem('${p.id}')" class="text-xs text-rose-500 hover:text-rose-700 hover:underline">刪除</button>
                     </div>
-
-                    <div class="mb-4">
-                        <h4 class="font-bold text-slate-800 text-sm mb-1">【題目】</h4>
-                        <div class="bg-slate-50 p-3.5 rounded-xl text-slate-800 text-sm leading-relaxed border border-slate-100">
-                            ${p.question}
+                    <div class="p-6 space-y-4">
+                        <div>
+                            <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">題目敘述</h4>
+                            <div class="text-slate-800 text-sm leading-relaxed">${p.question}</div>
                         </div>
-                    </div>
-
-                    ${p.svgDiagram ? p.svgDiagram : ''}
-
-                    ${p.formula ? `
-                        <div class="formula-box p-3 rounded-xl mb-4 text-sm">
-                            <span class="text-xs font-bold text-slate-500 block mb-1">關鍵公式 / 原理：</span>
-                            <div>${p.formula}</div>
-                        </div>` : ''}
-
-                    <div class="step-card pl-4 py-1 mb-4">
-                        <h4 class="font-bold text-indigo-900 text-sm mb-2">【推導與詳細過程】</h4>
-                        ${p.solution}
-                    </div>
-
-                    <div class="ans-box p-3 rounded-xl text-sm font-bold flex items-center justify-between">
-                        <span>【答】 ${p.answer}</span>
-                        <i class="fa-solid fa-circle-check text-emerald-600"></i>
+                        <div class="border-t border-slate-100 pt-4">
+                            <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">詳細解析與推導過程</h4>
+                            <div class="text-slate-700 text-sm leading-relaxed bg-white">${p.solution}</div>
+                        </div>
                     </div>
                 </article>
             `).join('');
 
-            // Trigger MathJax re-render
-            if (window.MathJax && MathJax.typesetPromise) {
+            // 觸發 MathJax 數學公式重新排版渲染
+            if (window.MathJax && window.MathJax.typesetPromise) {
                 MathJax.typesetPromise();
             }
         }
 
-        // Search Filter
-        function handleSearch() {
-            const query = document.getElementById("search-input").value.trim().toLowerCase();
-            const unit = appData.units.find(u => u.id === currentUnitId);
-            if (!unit) return;
-
-            if (!query) {
-                renderProblems(unit.problems);
-                return;
-            }
-
-            const filtered = unit.problems.filter(p => 
-                p.id.toLowerCase().includes(query) ||
-                p.question.toLowerCase().includes(query) ||
-                (p.tag && p.tag.toLowerCase().includes(query)) ||
-                p.answer.toLowerCase().includes(query)
-            );
-
-            renderProblems(filtered);
+        // 操作控制
+        function switchChapter(id) {
+            currentChapterId = id;
+            renderSidebar();
+            renderProblems();
         }
 
-        // Modal Controls
-        function openAddModal(type) {
-            document.getElementById("modal-type").value = type;
-            const hwFields = document.getElementById("homework-fields");
-            const unitFields = document.getElementById("unit-fields");
-            const title = document.getElementById("modal-title");
+        function filterProblems() {
+            const query = document.getElementById("searchInput").value;
+            renderProblems(query);
+        }
 
-            if (type === 'homework') {
-                title.innerText = "新增作業題目";
-                hwFields.classList.remove("hidden");
-                unitFields.classList.add("hidden");
-            } else {
-                title.innerText = "新增單元章節";
-                hwFields.classList.add("hidden");
-                unitFields.classList.remove("hidden");
+        function deleteProblem(pId) {
+            if (confirm("確定要刪除此筆作業題目嗎？")) {
+                appData.problems = appData.problems.filter(p => p.id !== pId);
+                saveData();
+                renderSidebar();
+                renderProblems();
             }
+        }
 
-            document.getElementById("add-modal").classList.remove("hidden");
+        // Modal 與儲存處理
+        function openAddModal() {
+            const select = document.getElementById("inputChapter");
+            select.innerHTML = appData.chapters.map(c => `<option value="${c.id}" ${c.id === currentChapterId ? 'selected' : ''}>${c.title}</option>`).join('');
+            document.getElementById("addModal").classList.remove("hidden");
         }
 
         function closeAddModal() {
-            document.getElementById("add-modal").classList.add("hidden");
-            document.getElementById("add-form").reset();
+            document.getElementById("addModal").classList.add("hidden");
+            document.getElementById("inputNum").value = "";
+            document.getElementById("inputTopic").value = "";
+            document.getElementById("inputQuestion").value = "";
+            document.getElementById("inputSolution").value = "";
         }
 
-        // Handle Add Form Submission
-        function handleFormSubmit(e) {
-            e.preventDefault();
-            const type = document.getElementById("modal-type").value;
+        function saveProblem() {
+            const chapterId = document.getElementById("inputChapter").value;
+            const num = document.getElementById("inputNum").value.trim();
+            const topic = document.getElementById("inputTopic").value.trim();
+            const question = document.getElementById("inputQuestion").value.trim();
+            const solution = document.getElementById("inputSolution").value.trim();
 
-            if (type === 'homework') {
-                const targetUnitId = document.getElementById("form-unit-id").value;
-                const unit = appData.units.find(u => u.id === targetUnitId);
-                if (unit) {
-                    const newProb = {
-                        id: document.getElementById("form-prob-id").value,
-                        tag: document.getElementById("form-tag").value,
-                        question: document.getElementById("form-question").value,
-                        solution: document.getElementById("form-solution").value,
-                        answer: document.getElementById("form-answer").value
-                    };
-                    unit.problems.push(newProb);
-                    saveData();
-                    switchUnit(targetUnitId);
-                }
-            } else {
-                const newUnit = {
-                    id: "unit-" + Date.now(),
-                    chapter: document.getElementById("form-chapter-num").value || "新章節",
-                    title: document.getElementById("form-unit-name").value || "新單元",
-                    problems: []
-                };
-                appData.units.push(newUnit);
-                saveData();
-                renderNav();
-                switchUnit(newUnit.id);
+            if (!num || !question || !solution) {
+                alert("請填寫完整的題號、題目與解答！");
+                return;
             }
 
+            const newProblem = {
+                id: "p_" + Date.now(),
+                chapterId,
+                num,
+                topic,
+                question,
+                solution
+            };
+
+            appData.problems.push(newProblem);
+            saveData();
             closeAddModal();
+            switchChapter(chapterId);
         }
 
-        // Delete Problem
-        function deleteProblem(probId) {
-            if (confirm(`確定要刪除題目 ${probId} 嗎？`)) {
-                const unit = appData.units.find(u => u.id === currentUnitId);
-                if (unit) {
-                    unit.problems = unit.problems.filter(p => p.id !== probId);
-                    saveData();
-                    renderProblems(unit.problems);
-                    renderNav();
-                }
-            }
-        }
-
-        // Mobile Sidebar Toggle
-        function toggleMobileSidebar() {
-            document.getElementById("sidebar").classList.toggle("-translate-x-full");
-            document.getElementById("sidebar-backdrop").classList.toggle("hidden");
-        }
-
-        // Export Data as JSON file
+        // 匯出 / 匯入 / 重置功能
         function exportData() {
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appData, null, 2));
-            const dlAnchorElem = document.createElement('a');
-            dlAnchorElem.setAttribute("href", dataStr);
-            dlAnchorElem.setAttribute("download", "circuit_homework_backup.json");
-            dlAnchorElem.click();
+            const dlAnchor = document.createElement('a');
+            const date = new Date().toISOString().slice(0,10);
+            dlAnchor.setAttribute("href", dataStr);
+            dlAnchor.setAttribute("download", `circuit_homework_backup_${date}.json`);
+            document.body.appendChild(dlAnchor);
+            dlAnchor.click();
+            dlAnchor.remove();
         }
 
-        // Initialize App
-        renderNav();
-        switchUnit(currentUnitId);
+        function openImportModal() {
+            document.getElementById("importModal").classList.remove("hidden");
+        }
+
+        function closeImportModal() {
+            document.getElementById("importModal").classList.add("hidden");
+            document.getElementById("importFileInput").value = "";
+        }
+
+        function processImport() {
+            const fileInput = document.getElementById("importFileInput");
+            const mode = document.querySelector('input[name="importMode"]:checked').value;
+
+            if (!fileInput.files || fileInput.files.length === 0) {
+                alert("請選擇要匯入的 JSON 檔案！");
+                return;
+            }
+
+            const file = fileInput.files[0];
+            const reader = new FileReader();
+
+            reader.onload = function(e) {
+                try {
+                    const importedData = JSON.parse(e.target.result);
+                    if (!importedData.chapters || !importedData.problems) {
+                        throw new Error("JSON 檔案格式不符合規範（需包含 chapters 與 problems）");
+                    }
+
+                    if (mode === "replace") {
+                        appData = importedData;
+                    } else {
+                        // 合併模式 (Merge)
+                        importedData.chapters.forEach(ch => {
+                            if (!appData.chapters.some(existingCh => existingCh.id === ch.id)) {
+                                appData.chapters.push(ch);
+                            }
+                        });
+                        importedData.problems.forEach(p => {
+                            const idx = appData.problems.findIndex(existingP => existingP.id === p.id || (existingP.num === p.num && existingP.chapterId === p.chapterId));
+                            if (idx >= 0) {
+                                appData.problems[idx] = p; // 覆蓋舊題號
+                            } else {
+                                appData.problems.push(p); // 新增題號
+                            }
+                        });
+                    }
+
+                    saveData();
+                    closeImportModal();
+                    renderSidebar();
+                    renderProblems();
+                    alert("資料匯入成功！");
+
+                } catch (err) {
+                    alert("匯入失敗：" + err.message);
+                }
+            };
+
+            reader.readAsText(file);
+        }
+
+        function resetDefaultData() {
+            if (confirm("確定要還原為初始預設資料嗎？這將覆蓋現有新增的題目。")) {
+                appData = JSON.parse(JSON.stringify(defaultData));
+                saveData();
+                renderSidebar();
+                renderProblems();
+            }
+        }
+
+        // 初始化 Initialization
+        window.addEventListener("DOMContentLoaded", () => {
+            renderSidebar();
+            renderProblems();
+        });
     </script>
 </body>
 </html>
