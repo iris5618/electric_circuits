@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>電路學 第一章 習題詳細解析</title>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com"></script>
+<!-- MathJax for LaTeX Rendering -->
+<script>
+MathJax = {
+tex: {
+inlineMath: [['￼'], ['\(', '\)']],
+displayMath: [['
+'], ['\[', '\]']]
+},
+svg: { fontCache: 'global' }
+};
+</script>
+<script type="text/javascript" id="MathJax-script" async
+src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+</script>
+<style>
+.step-card {
+border-left: 4px solid #3b82f6;
+}
+.formula-box {
+background-color: #f8fafc;
+border: 1px solid #e2e8f0;
+border-radius: 0.5rem;
+}
+.ans-box {
+background-color: #ecfdf5;
+border: 1px solid #a7f3d0;
+color: #065f46;
+}
+</style>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans leading-relaxed">
+<!-- Header -->
+<header class="bg-indigo-700 text-white shadow-lg py-6 mb-8">
+<div class="max-w-6xl mx-auto px-4">
+<h1 class="text-3xl font-bold">電路學第一章 基本概念 — 習題詳細解析</h1>
+<p class="text-indigo-200 mt-2">包含完整計算過程、觀念說明與函數波形繪製</p>
+</div>
+</header>
+<!-- Main Container -->
+<main class="max-w-6xl mx-auto px-4 pb-16 grid grid-cols-1 md:grid-cols-4 gap-6">
+<!-- Navigation Sidebar -->
+<aside class="md:col-span-1 space-y-2 sticky top-6 h-fit bg-white p-4 rounded-xl shadow-sm border border-gray-200">
+<h3 class="font-bold text-gray-700 mb-3 px-2 text-lg">題目導覽</h3>
+<nav class="flex flex-col space-y-1">
+<a href="#prob-1-4" class="px-3 py-2 rounded-lg hover:bg-indigo-50 hover:text-indigo-600 transition font-medium text-sm text-gray-600">題目 1-4 (靜電力計算)</a>
+<a href="#prob-1-5" class="px-3 py-2 rounded-lg hover:bg-indigo-50 hover:text-indigo-600 transition font-medium text-sm text-gray-600">題目 1-5 (電荷單位轉換)</a>
+<a href="#prob-1-6" class="px-3 py-2 rounded-lg hover:bg-indigo-50 hover:text-indigo-600 transition font-medium text-sm text-gray-600">題目 1-6 (庫侖定律比例)</a>
+<a href="#prob-1-8" class="px-3 py-2 rounded-lg hover:bg-indigo-50 hover:text-indigo-600 transition font-medium text-sm text-gray-600">題目 1-8 (線性電阻電壓)</a>
+<a href="#prob-1-10" class="px-3 py-2 rounded-lg hover:bg-indigo-50 hover:text-indigo-600 transition font-medium text-sm text-gray-600">題目 1-10 (RLC動態響應)</a>
+<a href="#prob-1-13" class="px-3 py-2 rounded-lg hover:bg-indigo-50 hover:text-indigo-600 transition font-medium text-sm text-gray-600">題目 1-13 (函數波形繪製)</a>
+</nav>
+</aside>
+<!-- Solutions Content -->
+<section class="md:col-span-3 space-y-8">
+<!-- Problem 1-4 -->
+<article id="prob-1-4" class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+<div class="flex justify-between items-start border-b pb-4 mb-4">
+<h2 class="text-xl font-bold text-indigo-900">題目 1-4</h2>
+<span class="bg-indigo-100 text-indigo-800 text-xs px-2.5 py-1 rounded-full font-semibold">靜電學 / 庫侖定律</span>
+</div>
+<div class="mb-4">
+<p class="font-semibold text-gray-700">【題目內容】</p>
+<p class="mt-1 bg-gray-50 p-3 rounded-md text-gray-800">在真空中，若有 ￼ 之正電荷與 ￼ 之負電荷，相距 ￼，試求其間之靜電力。</p>
+</div>
+<div class="space-y-4">
+<div class="formula-box p-3">
+<p class="text-sm font-semibold text-gray-600 mb-1">基本公式（庫侖定律）：</p>
+
+<p class="text-xs text-gray-500 mt-1">其中真空靜電常數 ￼。</p>
+</div>
+<div class="step-card pl-4 py-1">
+<p class="font-semibold text-indigo-700">詳細計算步驟：</p>
+<ol class="list-decimal list-inside space-y-2 mt-2 text-sm text-gray-700">
+<li>已知參數：
+￼，
+￼，
+距離 ￼。
+</li>
+<li>將數值代入庫侖定律公式：
+
+</li>
+<li>簡化分母與常數：
+
+</li>
+<li>決定作用力方向：兩電荷為一正一負（異性相吸），故其作用力為<b>吸引力</b>。習慣上吸引力可記為 negative 或註明為吸引力。</li>
+</ol>
+</div>
+<div class="ans-box p-3 rounded-md text-sm font-bold">
+答：￼ （或 ￼ 吸引力）
+</div>
+</div>
+</article>
+<!-- Problem 1-5 -->
+<article id="prob-1-5" class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+<div class="flex justify-between items-start border-b pb-4 mb-4">
+<h2 class="text-xl font-bold text-indigo-900">題目 1-5</h2>
+<span class="bg-indigo-100 text-indigo-800 text-xs px-2.5 py-1 rounded-full font-semibold">CGS 靜電單位制</span>
+</div>
+<div class="mb-4">
+<p class="font-semibold text-gray-700">【題目內容】</p>
+<p class="mt-1 bg-gray-50 p-3 rounded-md text-gray-800">有 ￼、￼ 兩帶電球體相距 ￼，且已知兩球體間具有 ￼ 的斥力，若 ￼ 球帶有 ￼ 的負電荷，試問 ￼ 球所帶電量及電荷種類為何？</p>
+</div>
+<div class="space-y-4">
+<div class="formula-box p-3">
+<p class="text-sm font-semibold text-gray-600 mb-1">單位轉換與 CGS 庫侖定律：</p>
+<ul class="list-disc list-inside text-xs text-gray-600 space-y-1">
+<li>￼ (達因)</li>
+<li>在 CGS 制中，庫侖定律為 ￼，其中電量單位為 ￼ (靜庫侖)。</li>
+</ul>
+</div>
+<div class="step-card pl-4 py-1">
+<p class="font-semibold text-indigo-700">詳細計算步驟：</p>
+<ol class="list-decimal list-inside space-y-2 mt-2 text-sm text-gray-700">
+<li>轉換單位：作用力 ￼，距離 ￼。</li>
+<li>已知 ￼ 球電量大小 ￼。代入 CGS 靜電力公式：
+
+</li>
+<li>計算 ￼：
+
+</li>
+<li>判斷電荷極性：因為兩球之間為<b>斥力</b>（同性相斥），已知 ￼ 球帶<b>負電荷</b>，所以 ￼ 球也必然帶<b>負電荷</b>。</li>
+</ol>
+</div>
+<div class="ans-box p-3 rounded-md text-sm font-bold">
+答：￼，負電荷
+</div>
+</div>
+</article>
+<!-- Problem 1-6 -->
+<article id="prob-1-6" class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+<div class="flex justify-between items-start border-b pb-4 mb-4">
+<h2 class="text-xl font-bold text-indigo-900">題目 1-6</h2>
+<span class="bg-indigo-100 text-indigo-800 text-xs px-2.5 py-1 rounded-full font-semibold">比例分析</span>
+</div>
+<div class="mb-4">
+<p class="font-semibold text-gray-700">【題目內容】</p>
+<p class="mt-1 bg-gray-50 p-3 rounded-md text-gray-800">兩帶電金屬球相距 ￼，已知其間之斥力為 ￼，若其中一帶電體之電荷加倍，兩球之距離亦加倍時，斥力應為若干？</p>
+</div>
+<div class="space-y-4">
+<div class="step-card pl-4 py-1">
+<p class="font-semibold text-indigo-700">詳細計算步驟：</p>
+<ol class="list-decimal list-inside space-y-2 mt-2 text-sm text-gray-700">
+<li>設原電荷分別為 ￼，距離為 ￼，原靜電力為：
+
+</li>
+<li>根據題目新條件：
+<ul class="list-disc list-inside pl-4 text-xs text-gray-600 mt-1">
+<li>其中一帶電體電荷加倍：￼</li>
+<li>兩球距離加倍：￼</li>
+</ul>
+</li>
+<li>列出新靜電力 ￼ 的表示式：
+
+</li>
+<li>代入原作用力大小：
+
+</li>
+</ol>
+</div>
+<div class="ans-box p-3 rounded-md text-sm font-bold">
+答：￼
+</div>
+</div>
+</article>
+<!-- Problem 1-8 -->
+<article id="prob-1-8" class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+<div class="flex justify-between items-start border-b pb-4 mb-4">
+<h2 class="text-xl font-bold text-indigo-900">題目 1-8</h2>
+<span class="bg-indigo-100 text-indigo-800 text-xs px-2.5 py-1 rounded-full font-semibold">直流電路分析</span>
+</div>
+<div class="mb-4">
+<p class="font-semibold text-gray-700">【題目內容】</p>
+<p class="mt-1 bg-gray-50 p-3 rounded-md text-gray-800">下圖所示電路，試求跨於線性電阻 ￼ 兩端的電壓。</p>
+</div>
+<!-- Circuit Diagram SVG -->
+<div class="my-4 flex justify-center bg-gray-50 p-4 rounded-lg border border-gray-200">
+<svg width="320" height="180" viewBox="0 0 320 180" class="max-w-full">
+<!-- Left loop: Voltage Source 2V -->
+<circle cx="60" cy="90" r="20" stroke="#1e293b" stroke-width="2" fill="white"/>
+<text x="60" y="85" text-anchor="middle" font-size="14" font-weight="bold">+</text>
+<text x="60" y="103" text-anchor="middle" font-size="14" font-weight="bold">-</text>
+<text x="25" y="95" font-size="14" font-weight="bold" fill="#2563eb">2V</text>
+<!-- Middle Branch: Resistor R1 -->
+<path d="M 160 40 L 160 70 L 153 75 L 167 83 L 153 91 L 167 99 L 153 107 L 160 112 L 160 140" stroke="#1e293b" stroke-width="2" fill="none"/>
+<text x="180" y="80" font-size="13" font-weight="bold">￼</text>
+<text x="180" y="95" font-size="13" font-weight="bold" fill="#059669">￼</text>
+<text x="180" y="110" font-size="12" fill="#059669">￼</text>
+<text x="180" y="125" font-size="13" font-weight="bold">￼</text>
+<!-- Top Right Branch: Resistor R2 -->
+<path d="M 160 40 L 200 40 L 205 33 L 213 47 L 221 33 L 229 47 L 237 33 L 242 40 L 260 40" stroke="#1e293b" stroke-width="2" fill="none"/>
+<text x="220" y="25" text-anchor="middle" font-size="13" font-weight="bold">￼</text>
+<!-- Rightmost Current Source 1A -->
+<path d="M 260 40 L 260 70" stroke="#1e293b" stroke-width="2" fill="none"/>
+<circle cx="260" cy="90" r="20" stroke="#1e293b" stroke-width="2" fill="white"/>
+<path d="M 260 100 L 260 80" stroke="#1e293b" stroke-width="2" fill="none"/>
+<polygon points="260,78 255,86 265,86" fill="#1e293b"/>
+<text x="290" y="95" font-size="14" font-weight="bold">1A</text>
+<!-- Bottom line and Top Connectors -->
+<path d="M 60 40 L 160 40" stroke="#1e293b" stroke-width="2" fill="none"/>
+<path d="M 60 140 L 260 140 L 260 110" stroke="#1e293b" stroke-width="2" fill="none"/>
+<path d="M 60 40 L 60 70" stroke="#1e293b" stroke-width="2" fill="none"/>
+<path d="M 60 110 L 60 140" stroke="#1e293b" stroke-width="2" fill="none"/>
+<!-- Nodes -->
+<circle cx="160" cy="40" r="3" fill="#1e293b"/>
+<circle cx="160" cy="140" r="3" fill="#1e293b"/>
+</svg>
+</div>
+<div class="space-y-4">
+<div class="step-card pl-4 py-1">
+<p class="font-semibold text-indigo-700">觀念分析與步驟：</p>
+<ol class="list-decimal list-inside space-y-2 mt-2 text-sm text-gray-700">
+<li>觀察電路結構：獨立電壓源 ￼ 的兩端直接並聯跨接在電阻 ￼ 的上下兩節點之間。</li>
+<li>根據<b>理想電壓源性質</b>：理想電壓源兩端可強行維持固定的電壓差，不受外部並聯之其他支路（如右側的 ￼ 與 ￼ 電流源組合）影響。</li>
+<li>因此，跨於電阻 ￼ 兩端的電壓直接等於理想電壓源的電壓：
+
+</li>
+</ol>
+</div>
+<div class="ans-box p-3 rounded-md text-sm font-bold">
+答：￼
+</div>
+</div>
+</article>
+<!-- Problem 1-10 -->
+<article id="prob-1-10" class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+<div class="flex justify-between items-start border-b pb-4 mb-4">
+<h2 class="text-xl font-bold text-indigo-900">題目 1-10</h2>
+<span class="bg-indigo-100 text-indigo-800 text-xs px-2.5 py-1 rounded-full font-semibold">RLC 串聯動態響應</span>
+</div>
+<div class="mb-4">
+<p class="font-semibold text-gray-700">【題目內容】</p>
+<p class="mt-1 bg-gray-50 p-3 rounded-md text-gray-800">
+下圖所示之電路是由線性非時變元件所組成，其輸入電流 ￼，試求當 ￼ 時之 ￼、￼ 和 ￼。其中 ￼，￼，￼ 且 ￼。
+</p>
+</div>
+<div class="space-y-4">
+<div class="formula-box p-3">
+<p class="text-sm font-semibold text-gray-600 mb-1">元件 ￼ 特性公式：</p>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-2 text-xs text-center font-mono mt-2">
+<div class="bg-white p-2 rounded border">￼</div>
+<div class="bg-white p-2 rounded border">￼</div>
+<div class="bg-white p-2 rounded border">￼</div>
+</div>
+</div>
+<div class="step-card pl-4 py-1">
+<p class="font-semibold text-indigo-700">詳細推導過程：</p>
+<div class="space-y-3 mt-2 text-sm text-gray-700">
+<div>
+<p class="font-semibold text-gray-800">(1) 電阻電壓 ￼：</p>
+
+</div>
+<div>
+<p class="font-semibold text-gray-800">(2) 電感電壓 ￼：</p>
+
+</div>
+<div>
+<p class="font-semibold text-gray-800">(3) 電容電壓 ￼：</p>
+
+</div>
+</div>
+</div>
+<div class="ans-box p-3 rounded-md text-sm font-bold space-y-1">
+<p>答：</p>
+<p>￼</p>
+<p>￼</p>
+<p>￼</p>
+</div>
+</div>
+</article>
+<!-- Problem 1-13 -->
+<article id="prob-1-13" class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+<div class="flex justify-between items-start border-b pb-4 mb-4">
+<h2 class="text-xl font-bold text-indigo-900">題目 1-13</h2>
+<span class="bg-indigo-100 text-indigo-800 text-xs px-2.5 py-1 rounded-full font-semibold">奇異函數與波形繪製</span>
+</div>
+<p class="font-semibold text-gray-700 mb-4">【題目內容】試畫出下列各函數之波形：</p>
+<div class="space-y-8">
+<!-- Subproblem (1) -->
+<div class="border-t pt-4">
+<h3 class="font-bold text-md text-indigo-800">(1) ￼</h3>
+<p class="text-xs text-gray-600 mt-1">分析：由兩個單位階躍函數合成，在 ￼ 跳升至 3，在 ￼ 下降 3 歸零。</p>
+<div class="mt-3 flex justify-center bg-gray-50 p-4 rounded-lg">
+<svg width="260" height="130" viewBox="0 0 260 130">
+<!-- Axes -->
+<line x1="30" y1="100" x2="230" y2="100" stroke="#64748b" stroke-width="1.5"/>
+<line x1="50" y1="115" x2="50" y2="15" stroke="#64748b" stroke-width="1.5"/>
+<text x="235" y="104" font-size="12">t</text>
+<text x="45" y="12" font-size="12">f(t)</text>
+<text x="40" y="112" font-size="10">0</text>
+<!-- Ticks -->
+<line x1="130" y1="97" x2="130" y2="103" stroke="#64748b"/>
+<text x="127" y="115" font-size="10">2</text>
+<line x1="47" y1="40" x2="53" y2="40" stroke="#64748b"/>
+<text x="35" y="44" font-size="10">3</text>
+<!-- Plot -->
+<path d="M 30 100 L 50 100 L 50 40 L 130 40 L 130 100 L 220 100" stroke="#2563eb" stroke-width="2.5" fill="none"/>
+</svg>
+</div>
+</div>
+<!-- Subproblem (5) -->
+<div class="border-t pt-4">
+<h3 class="font-bold text-md text-indigo-800">(5) ￼</h3>
+<p class="text-xs text-gray-600 mt-1">分析：由三個衝激函數（Impulse）組成，箭號代表衝激脈衝的方向與強度。</p>
+<div class="mt-3 flex justify-center bg-gray-50 p-4 rounded-lg">
+<svg width="260" height="150" viewBox="0 0 260 150">
+<!-- Axes -->
+<line x1="30" y1="75" x2="230" y2="75" stroke="#64748b" stroke-width="1.5"/>
+<line x1="60" y1="135" x2="60" y2="15" stroke="#64748b" stroke-width="1.5"/>
+<text x="235" y="79" font-size="12">t</text>
+<text x="55" y="12" font-size="12">f(t)</text>
+<!-- Ticks -->
+<text x="50" y="87" font-size="10">0</text>
+<line x1="120" y1="72" x2="120" y2="78" stroke="#64748b"/>
+<text x="117" y="87" font-size="10">1</text>
+<line x1="180" y1="72" x2="180" y2="78" stroke="#64748b"/>
+<text x="177" y="87" font-size="10">2</text>
+<!-- Impulse at t=0 (+1) -->
+<line x1="60" y1="75" x2="60" y2="30" stroke="#dc2626" stroke-width="2"/>
+<polygon points="60,25 56,33 64,33" fill="#dc2626"/>
+<text x="68" y="32" font-size="10" fill="#dc2626">1</text>
+<!-- Impulse at t=1 (-1) -->
+<line x1="120" y1="75" x2="120" y2="120" stroke="#dc2626" stroke-width="2"/>
+<polygon points="120,125 116,117 124,117" fill="#dc2626"/>
+<text x="128" y="122" font-size="10" fill="#dc2626">-1</text>
+<!-- Impulse at t=2 (+1) -->
+<line x1="180" y1="75" x2="180" y2="30" stroke="#dc2626" stroke-width="2"/>
+<polygon points="180,25 176,33 184,33" fill="#dc2626"/>
+<text x="188" y="32" font-size="10" fill="#dc2626">1</text>
+</svg>
+</div>
+</div>
+<!-- Subproblem (6) -->
+<div class="border-t pt-4">
+<h3 class="font-bold text-md text-indigo-800">(6) ￼</h3>
+<p class="text-xs text-gray-600 mt-1">分析：在 ￼ 跳至 ￼，在 ￼ 時往下跳躍 ￼ 個單位變成 ￼，此後保持為 ￼。</p>
+<div class="mt-3 flex justify-center bg-gray-50 p-4 rounded-lg">
+<svg width="260" height="140" viewBox="0 0 260 140">
+<!-- Axes -->
+<line x1="30" y1="70" x2="230" y2="70" stroke="#64748b" stroke-width="1.5"/>
+<line x1="50" y1="130" x2="50" y2="15" stroke="#64748b" stroke-width="1.5"/>
+<text x="235" y="74" font-size="12">t</text>
+<text x="45" y="12" font-size="12">f(t)</text>
+<!-- Ticks & Labels -->
+<text x="38" y="82" font-size="10">0</text>
+<line x1="47" y1="35" x2="53" y2="35" stroke="#64748b"/>
+<text x="35" y="38" font-size="10">1</text>
+<line x1="47" y1="105" x2="53" y2="105" stroke="#64748b"/>
+<text x="30" y="108" font-size="10">-1</text>
+<line x1="120" y1="67" x2="120" y2="73" stroke="#64748b"/>
+<text x="117" y="82" font-size="10">1</text>
+<!-- Plot -->
+<path d="M 30 70 L 50 70 L 50 35 L 120 35 L 120 105 L 220 105" stroke="#2563eb" stroke-width="2.5" fill="none"/>
+</svg>
+</div>
+</div>
+<!-- Subproblem (8) -->
+<div class="border-t pt-4">
+<h3 class="font-bold text-md text-indigo-800">(8) ￼</h3>
+<p class="text-xs text-gray-600 mt-1">分析：階梯狀函數。在 ￼ 時升至 ￼，在 ￼ 時再升至 ￼ 並保持。</p>
+<div class="mt-3 flex justify-center bg-gray-50 p-4 rounded-lg">
+<svg width="260" height="140" viewBox="0 0 260 140">
+<!-- Axes -->
+<line x1="30" y1="110" x2="230" y2="110" stroke="#64748b" stroke-width="1.5"/>
+<line x1="50" y1="125" x2="50" y2="15" stroke="#64748b" stroke-width="1.5"/>
+<text x="235" y="114" font-size="12">t</text>
+<text x="45" y="12" font-size="12">f(t)</text>
+<!-- Ticks -->
+<text x="38" y="122" font-size="10">0</text>
+<line x1="47" y1="70" x2="53" y2="70" stroke="#64748b"/>
+<text x="35" y="74" font-size="10">1</text>
+<line x1="47" y1="30" x2="53" y2="30" stroke="#64748b"/>
+<text x="35" y="34" font-size="10">2</text>
+<line x1="100" y1="107" x2="100" y2="113" stroke="#64748b"/>
+<text x="97" y="122" font-size="10">1</text>
+<line x1="160" y1="107" x2="160" y2="113" stroke="#64748b"/>
+<text x="157" y="122" font-size="10">2</text>
+<!-- Plot -->
+<path d="M 30 110 L 100 110 L 100 70 L 160 70 L 160 30 L 220 30" stroke="#2563eb" stroke-width="2.5" fill="none"/>
+</svg>
+</div>
+</div>
+<!-- Subproblem (9) -->
+<div class="border-t pt-4">
+<h3 class="font-bold text-md text-indigo-800">(9) ￼</h3>
+<p class="text-xs text-gray-600 mt-1">分析：在 ￼ 為斜率 1 的線性斜坡上升，在 ￼ 轉為水平常數值 ￼。</p>
+<div class="mt-3 flex justify-center bg-gray-50 p-4 rounded-lg">
+<svg width="260" height="130" viewBox="0 0 260 130">
+<!-- Axes -->
+<line x1="30" y1="100" x2="230" y2="100" stroke="#64748b" stroke-width="1.5"/>
+<line x1="50" y1="115" x2="50" y2="15" stroke="#64748b" stroke-width="1.5"/>
+<text x="235" y="104" font-size="12">t</text>
+<text x="45" y="12" font-size="12">f(t)</text>
+<!-- Ticks -->
+<text x="38" y="112" font-size="10">0</text>
+<line x1="47" y1="40" x2="53" y2="40" stroke="#64748b"/>
+<text x="35" y="44" font-size="10">1</text>
+<line x1="120" y1="97" x2="120" y2="103" stroke="#64748b"/>
+<text x="117" y="112" font-size="10">1</text>
+<!-- Plot -->
+<path d="M 30 100 L 50 100 L 120 40 L 220 40" stroke="#2563eb" stroke-width="2.5" fill="none"/>
+<line x1="120" y1="40" x2="120" y2="100" stroke="#cbd5e1" stroke-dasharray="3,3"/>
+</svg>
+</div>
+</div>
+<!-- Subproblem (10) -->
+<div class="border-t pt-4">
+<h3 class="font-bold text-md text-indigo-800">(10) ￼</h3>
+<p class="text-xs text-gray-600 mt-1">
+分析：寬度為 ￼、中心位於 ￼ 的單位矩形脈波。範圍介於 ￼ 至 ￼。
+</p>
+<div class="mt-3 flex justify-center bg-gray-50 p-4 rounded-lg">
+<svg width="280" height="130" viewBox="0 0 280 130">
+<!-- Axes -->
+<line x1="30" y1="100" x2="260" y2="100" stroke="#64748b" stroke-width="1.5"/>
+<line x1="50" y1="115" x2="50" y2="15" stroke="#64748b" stroke-width="1.5"/>
+<text x="265" y="104" font-size="12">t</text>
+<text x="45" y="12" font-size="12">f(t)</text>
+<!-- Ticks & Labels -->
+<text x="38" y="112" font-size="10">0</text>
+<line x1="47" y1="40" x2="53" y2="40" stroke="#64748b"/>
+<text x="35" y="44" font-size="10">1</text>
+<line x1="130" y1="97" x2="130" y2="103" stroke="#64748b"/>
+<text x="118" y="115" font-size="9">1.75</text>
+<line x1="170" y1="97" x2="170" y2="103" stroke="#64748b"/>
+<text x="166" y="115" font-size="9">2</text>
+<line x1="210" y1="97" x2="210" y2="103" stroke="#64748b"/>
+<text x="200" y="115" font-size="9">2.25</text>
+<!-- Plot -->
+<path d="M 30 100 L 130 100 L 130 40 L 210 40 L 210 100 L 250 100" stroke="#2563eb" stroke-width="2.5" fill="none"/>
+<line x1="170" y1="40" x2="170" y2="100" stroke="#cbd5e1" stroke-dasharray="3,3"/>
+</svg>
+</div>
+</div>
+</div>
+</article>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-gray-800 text-gray-400 text-center py-6">
+<p class="text-sm">電路學第一章 習題詳細解析檔案</p>
+</footer>
+</body>
+</html>
