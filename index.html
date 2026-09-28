@@ -350,34 +350,40 @@
   </div>
 
   <script>
-    // 預設初次載入資料
-    const defaultData = {
-      chapters: [
-        { id: "ch1", title: "第一章 基本概念", desc: "靜電力、庫侖定律與元件特性" },
-        { id: "ch2", title: "第二章 電阻電路與直流電路", desc: "線性性質、電源轉換、等效電阻與KVL/KCL" }
-      ],
-      problems: [
-        {
-          id: "p2-1", chapterId: "ch2", num: "2-1", topic: "線性性質應用",
-          question: "如下圖所示，若 $V_o = 1\\text{V}$，試利用線性性質求此電路 $V_o$ 的實際值。",
-          solution: "<p><b>解析：</b>設 $V_o' = 1\\text{V}$，反推電源為 $V_s' = 2.5\\text{V}$。根據線性比例：$$V_o = 1\\text{V} \\times \\frac{40\\text{V}}{2.5\\text{V}} = 16\\text{V}$$</p>"
-        }
-      ]
-    };
-
-    let activeChapterId = "ch2";
-
-    // 初始化 App
-    function initApp() {
-      if (!localStorage.getItem("circuit_chapters")) {
-        localStorage.setItem("circuit_chapters", JSON.stringify(defaultData.chapters));
+// 1. 網頁開啟時，自動從 GitHub 的 data.json 抓取最新資料
+async function loadRemoteData() {
+  try {
+    // 加入時間戳記 (?t=...) 防止瀏覽器快取舊的 json 檔
+    const response = await fetch(`data.json?t=${Date.now()}`, { cache: "no-store" });
+    if (response.ok) {
+      const remoteData = await response.json();
+      if (remoteData.chapters && remoteData.problems) {
+        localStorage.setItem("circuit_chapters", JSON.stringify(remoteData.chapters));
+        localStorage.setItem("circuit_problems", JSON.stringify(remoteData.problems));
       }
-      if (!localStorage.getItem("circuit_problems")) {
-        localStorage.setItem("circuit_problems", JSON.stringify(defaultData.problems));
-      }
-      renderChapters();
-      selectChapter(activeChapterId);
     }
+  } catch (err) {
+    console.log("尚無線上 data.json 或網路異常，優先使用本地紀錄", err);
+  } finally {
+    // 讀取完遠端資料後，再渲染介面
+    initApp();
+  }
+}
+
+// 2. 初始化介面
+function initApp() {
+  if (!localStorage.getItem("circuit_chapters")) {
+    localStorage.setItem("circuit_chapters", JSON.stringify(defaultData.chapters));
+  }
+  if (!localStorage.getItem("circuit_problems")) {
+    localStorage.setItem("circuit_problems", JSON.stringify(defaultData.problems));
+  }
+  renderChapters();
+  selectChapter(activeChapterId);
+}
+
+// 3. 將頁面最底部的啟動指令改為呼叫 loadRemoteData()
+loadRemoteData();
 
     // 側邊欄手機觸控邏輯
     function toggleMobileSidebar() {
