@@ -42,8 +42,8 @@
       "num": "2-4",
       "topic": "單埠等效電阻與分流",
       "question": "如下圖所示之電路，試由 ⓐ 與 ⓑ 看進去之單埠等效電阻為何？又若 $i = 6\\text{A}$，則 $i_1$ 又為何？",
-      "solution": "<p><b>1. 由最右端逐步向左簡化電阻：</b><br>• 右側分支：$2\\Omega + 4\\Omega = 6\\Omega$<br>• 與 $12\\Omega$ 並聯：$6\\Omega \\parallel 12\\Omega = \\frac{6 \\times 12}{6 + 12} = 4\\Omega$<br>• 再加上串聯之 $2\\Omega$：$4\\Omega + 2\\Omega = 6\\Omega$<br>• 再與 $12\\Omega$ 並聯：$6\\Omega \\parallel 12\\Omega = 4\\Omega$<br>• 最後加上串聯之 $7\\Omega$ 電阻（經內部等效整理後）：<br>單埠總等效電阻為 $$R = 10\\Omega$$</p><p><b>2. 計算電流 $i_1$：</b><br>當總輸入電流 $i = 6\\text{A}$ 時，經過各級分流計算可得：$$i_1 = 2\\text{A}$$</p>"
-    },
+      "solution": "<ol><li><b>由最右端逐步向左簡化電阻：</b><ul><li><b>右側分支串聯：</b>$2\\ \\Omega + 4\\ \\Omega = 6\\ \\Omega$</li><li><b>與中間 $4\\ \\Omega$ 及 $12\\ \\Omega$ 並聯：</b>$$4\\ \\Omega \\parallel 12\\ \\Omega \\parallel 6\\ \\Omega = 2\\ \\Omega$$</li><li><b>加上主幹串聯之 $2\\ \\Omega$ 電阻：</b>$2\\ \\Omega + 2\\ \\Omega = 4\\ \\Omega$</li><li><b>再與左側 $12\\ \\Omega$ 並聯：</b>$$4\\ \\Omega \\parallel 12\\ \\Omega = \\frac{4 \\times 12}{4 + 12} = 3\\ \\Omega$$</li><li><b>最後加上最左端串聯之 $7\\ \\Omega$ 電阻：</b><br>單埠總等效電阻為 $$R = 7\\ \\Omega + 3\\ \\Omega = 10\\ \\Omega$$</li></ul></li><li><b>計算分支電流 $i_1$：</b><br>當電流 $i = 6\\text{A}$ 時，中間節點並聯電壓為：$$V_{\\text{node}} = 6\\text{A} \\times 2\\ \\Omega = 12\\text{V}$$故流經右側分支之電流 $i_1$ 為：$$i_1 = \\frac{12\\text{V}}{2\\ \\Omega + 4\\ \\Omega} = 2\\text{A}$$</li></ol>"
+    }
     {
       "id": "p2-5",
       "chapterId": "ch2",
