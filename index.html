@@ -2,7 +2,7 @@
 <html lang="zh-TW">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>電路學學習歷程與作業本</title>
   <!-- MathJax 3 數學公式渲染引擎 -->
   <script>
@@ -33,8 +33,20 @@
       color: var(--text-main);
       display: flex;
       height: 100vh;
+      height: 100dvh;
       overflow: hidden;
     }
+
+    /* 側邊欄遮罩 (手機版) */
+    .sidebar-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.4);
+      z-index: 99;
+      backdrop-filter: blur(2px);
+    }
+
     /* 側邊欄 */
     .sidebar {
       width: var(--sidebar-width);
@@ -43,10 +55,15 @@
       display: flex;
       flex-direction: column;
       flex-shrink: 0;
+      z-index: 100;
+      transition: transform 0.3s ease;
     }
     .sidebar-header {
       padding: 20px;
       border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
     .sidebar-header h1 { font-size: 1.2rem; font-weight: 700; color: var(--primary); }
     .sidebar-menu { flex: 1; overflow-y: auto; padding: 15px; }
@@ -84,7 +101,7 @@
     .btn-success:hover { background: #059669; }
 
     /* 主內容區 */
-    .main-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+    .main-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; width: 100%; }
     .top-bar {
       padding: 15px 30px;
       background: var(--card-bg);
@@ -92,6 +109,22 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      gap: 15px;
+    }
+    .top-bar-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .hamburger-btn {
+      display: none;
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 6px 10px;
+      font-size: 1.2rem;
+      cursor: pointer;
+      color: var(--text-main);
     }
     .search-input {
       width: 300px;
@@ -110,23 +143,27 @@
       padding: 24px;
       margin-bottom: 24px;
       box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      overflow-x: auto;
     }
     .problem-header {
       display: flex;
       justify-content: space-between;
+      align-items: center;
       margin-bottom: 12px;
       padding-bottom: 8px;
       border-bottom: 1px solid #f1f5f9;
     }
     .problem-num { font-weight: 700; color: var(--primary); font-size: 1.1rem; }
     .problem-topic { background: #e0e7ff; color: #3730a3; padding: 2px 8px; border-radius: 4px; font-size: 0.85rem; }
-    .problem-q { font-size: 1rem; line-height: 1.6; margin-bottom: 16px; font-weight: 500; }
+    .problem-q { font-size: 1rem; line-height: 1.6; margin-bottom: 16px; font-weight: 500; word-break: break-word; }
     .problem-sol {
       background: #f8fafc;
       border-left: 4px solid var(--primary);
       padding: 16px;
       border-radius: 0 8px 8px 0;
       line-height: 1.6;
+      word-break: break-word;
+      overflow-x: auto;
     }
 
     /* Modal 對話盒 */
@@ -138,13 +175,14 @@
       justify-content: center;
       align-items: center;
       z-index: 1000;
+      padding: 15px;
     }
     .modal-content {
       background: white;
       padding: 24px;
       border-radius: 10px;
       width: 500px;
-      max-width: 90%;
+      max-width: 100%;
       max-height: 90vh;
       overflow-y: auto;
     }
@@ -153,14 +191,61 @@
     .form-group input, .form-group textarea, .form-group select {
       width: 100%; padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px;
     }
+
+    /* RWD 手機版切換選單 */
+    @media (max-width: 768px) {
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100%;
+        transform: translateX(-100%);
+        box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+      }
+      .sidebar.active {
+        transform: translateX(0);
+      }
+      .sidebar-overlay.active {
+        display: block;
+      }
+      .hamburger-btn {
+        display: block;
+      }
+      .top-bar {
+        padding: 12px 16px;
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .top-bar-title {
+        justify-content: space-between;
+        width: 100%;
+      }
+      .top-bar-title h2 {
+        font-size: 1.1rem;
+      }
+      .search-input {
+        width: 100%;
+      }
+      .content-area {
+        padding: 15px;
+      }
+      .problem-card {
+        padding: 16px;
+        margin-bottom: 16px;
+      }
+    }
   </style>
 </head>
 <body>
 
+  <!-- 手機版側邊欄遮罩 -->
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeMobileSidebar()"></div>
+
   <!-- 側邊欄 -->
-  <div class="sidebar">
+  <div class="sidebar" id="sidebar">
     <div class="sidebar-header">
       <h1>電路學學習歷程</h1>
+      <button class="hamburger-btn" onclick="closeMobileSidebar()" style="display: flex; align-items: center; justify-content: center; width: 32px; height: 32px;">✕</button>
     </div>
     <div class="sidebar-menu" id="chapterList">
       <!-- 動態載入章節列表 -->
@@ -168,10 +253,10 @@
     <div class="sidebar-actions">
       <button class="btn btn-primary" onclick="openModal('addProblemModal')">➕ 新增作業題目</button>
       <button class="btn" onclick="openModal('addChapterModal')">📁 新增章節單元</button>
-      <hr style="border: 0; border-top: 1px solid var(--border); my: 4px;">
+      <hr style="border: 0; border-top: 1px solid var(--border); margin: 4px 0;">
       <button class="btn btn-success" id="ghSyncBtn" onclick="syncToGitHub()">☁️ 一鍵同步至 GitHub</button>
       <button class="btn" onclick="configureGitHub()">⚙️ 設定 GitHub 權限</button>
-      <hr style="border: 0; border-top: 1px solid var(--border); my: 4px;">
+      <hr style="border: 0; border-top: 1px solid var(--border); margin: 4px 0;">
       <button class="btn" onclick="openModal('importModal')">📥 匯入 JSON 檔案</button>
       <button class="btn" onclick="exportData()">📤 匯出 JSON 備份</button>
     </div>
@@ -180,7 +265,10 @@
   <!-- 主要顯示區 -->
   <div class="main-content">
     <div class="top-bar">
-      <h2 id="currentChapterTitle">選擇單元中...</h2>
+      <div class="top-bar-title">
+        <button class="hamburger-btn" onclick="toggleMobileSidebar()">☰選單</button>
+        <h2 id="currentChapterTitle">選擇單元中...</h2>
+      </div>
       <input type="text" class="search-input" id="searchInput" placeholder="搜尋題號或關鍵字..." oninput="renderProblems()">
     </div>
     <div class="content-area" id="problemContainer">
@@ -291,6 +379,17 @@
       selectChapter(activeChapterId);
     }
 
+    // 側邊欄手機觸控邏輯
+    function toggleMobileSidebar() {
+      document.getElementById('sidebar').classList.toggle('active');
+      document.getElementById('sidebarOverlay').classList.toggle('active');
+    }
+
+    function closeMobileSidebar() {
+      document.getElementById('sidebar').classList.remove('active');
+      document.getElementById('sidebarOverlay').classList.remove('active');
+    }
+
     // 取得資料
     function getChapters() { return JSON.parse(localStorage.getItem("circuit_chapters") || "[]"); }
     function getProblems() { return JSON.parse(localStorage.getItem("circuit_problems") || "[]"); }
@@ -307,7 +406,10 @@
       chapters.forEach(c => {
         const item = document.createElement("div");
         item.className = `menu-item ${c.id === activeChapterId ? 'active' : ''}`;
-        item.onclick = () => selectChapter(c.id);
+        item.onclick = () => {
+          selectChapter(c.id);
+          closeMobileSidebar();
+        };
         item.innerHTML = `<div>${c.title}</div><small style="color:var(--text-muted);">${c.desc}</small>`;
         container.appendChild(item);
 
@@ -490,14 +592,12 @@
       syncBtn.disabled = true;
 
       try {
-        // 1. 打包當前所有數據
         const currentData = {
           chapters: getChapters(),
           problems: getProblems()
         };
         const jsonStr = JSON.stringify(currentData, null, 2);
 
-        // 正確處理 UTF-8 中文字串轉 Base64
         const bytes = new TextEncoder().encode(jsonStr);
         let binary = "";
         for (let i = 0; i < bytes.byteLength; i++) {
@@ -505,7 +605,6 @@
         }
         const contentBase64 = btoa(binary);
 
-        // 2. 獲取當前 GitHub 上舊檔的 SHA 碼（避免 Write Conflict）
         const getUrl = `https://api.github.com/repos/${config.owner}/${config.repo}/contents/${config.path}?ref=${config.branch}`;
         const getRes = await fetch(getUrl, {
           headers: { 
@@ -520,7 +619,6 @@
           sha = fileData.sha;
         }
 
-        // 3. 發送 PUT 請求提交 Commit 更新 GitHub 檔案
         const putUrl = `https://api.github.com/repos/${config.owner}/${config.repo}/contents/${config.path}`;
         const putRes = await fetch(putUrl, {
           method: "PUT",
