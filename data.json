@@ -20,6 +20,7 @@
       "question": "如下圖所示，若 $V_o = 1\\text{V}$，試利用線性性質求此電路 $V_o$ 的實際值。",
       "solution": "<p><b>1. 假設響應：</b>令輸出電壓假設值 $V_o' = 1\\text{V}$。</p><p><b>2. 反推輸入電源電壓 $V_s'$：</b><br>• 流經 $8\\Omega$ 電阻之電流 $I_o' = \\frac{1\\text{V}}{8\\Omega} = 0.125\\text{A}$。<br>• 電阻 $12\\Omega$ 之壓降 $V_{12}' = 0.125\\text{A} \\times 12\\Omega = 1.5\\text{V}$。<br>• 跨過 $5\\Omega$ 之電壓 $V_5' = V_o' + V_{12}' = 1 + 1.5 = 2.5\\text{V}$。<br>• 由此可知，當輸出為 $1\\text{V}$ 時，對應的輸入電源電壓為 $V_s' = 2.5\\text{V}$。</p><p><b>3. 利用線性比例（線性性質）：</b><br>實際電源電壓為 $V_s = 40\\text{V}$，故實際輸出電壓為：$$V_o = V_o' \\times \\frac{V_s}{V_s'} = 1\\text{V} \\times \\frac{40\\text{V}}{2.5\\text{V}} = 16\\text{V}$$</p>"
     },
+    ],
     {
       "problems": [
         {
