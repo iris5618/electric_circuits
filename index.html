@@ -4,6 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>電路學學習歷程與作業本</title>
+  <!-- 強制瀏覽器不快取頁面，每次開啟都載入最新版 -->
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+
   <!-- MathJax 3 數學公式渲染引擎 -->
   <script>
     window.MathJax = {
@@ -15,6 +20,7 @@
     };
   </script>
   <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+  
   <style>
     :root {
       --primary: #2563eb;
@@ -235,10 +241,6 @@
       }
     }
   </style>
-  <!-- 強制瀏覽器不快取頁面，每次開啟都載入最新版 -->
-  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-  <meta http-equiv="Pragma" content="no-cache">
-  <meta http-equiv="Expires" content="0">
 </head>
 <body>
 
@@ -354,45 +356,50 @@
   </div>
 
   <script>
-// 1. 網頁開啟時，自動從 GitHub 的 data.json 抓取最新資料
-async function loadRemoteData() {
-  try {
-    // 加入時間戳記 (?t=...) 防止瀏覽器快取舊的 json 檔
-    // 網址加上 ?t=${Date.now()}，瀏覽器會以為是全新的請求，不會讀取舊快取
-    const response = await fetch(`data.json?t=${Date.now()}`, { cache: "no-store" })
-  .then(response => response.json())
-  .then(data => {
-    // 處理最新資料
-  });
-    if (response.ok) {
-      const remoteData = await response.json();
-      if (remoteData.chapters && remoteData.problems) {
-        localStorage.setItem("circuit_chapters", JSON.stringify(remoteData.chapters));
-        localStorage.setItem("circuit_problems", JSON.stringify(remoteData.problems));
+    // 全域狀態與預設資料定義
+    let activeChapterId = "ch1";
+    const defaultData = {
+      chapters: [
+        { id: "ch1", title: "第一章 基本概念", desc: "靜電力、庫侖定律、元件特性與基本訊號波形" }
+      ],
+      problems: []
+    };
+
+    // 1. 網頁開啟時，自動從 GitHub 的 data.json 抓取最新資料
+    async function loadRemoteData() {
+      try {
+        const response = await fetch(`data.json?t=${Date.now()}`, { cache: "no-store" });
+        if (response.ok) {
+          const remoteData = await response.json();
+          if (remoteData.chapters && remoteData.problems) {
+            localStorage.setItem("circuit_chapters", JSON.stringify(remoteData.chapters));
+            localStorage.setItem("circuit_problems", JSON.stringify(remoteData.problems));
+          }
+        }
+      } catch (err) {
+        console.log("尚無線上 data.json 或網路異常，優先使用本地紀錄", err);
+      } finally {
+        initApp();
       }
     }
-  } catch (err) {
-    console.log("尚無線上 data.json 或網路異常，優先使用本地紀錄", err);
-  } finally {
-    // 讀取完遠端資料後，再渲染介面
-    initApp();
-  }
-}
 
-// 2. 初始化介面
-function initApp() {
-  if (!localStorage.getItem("circuit_chapters")) {
-    localStorage.setItem("circuit_chapters", JSON.stringify(defaultData.chapters));
-  }
-  if (!localStorage.getItem("circuit_problems")) {
-    localStorage.setItem("circuit_problems", JSON.stringify(defaultData.problems));
-  }
-  renderChapters();
-  selectChapter(activeChapterId);
-}
+    // 2. 初始化介面
+    function initApp() {
+      if (!localStorage.getItem("circuit_chapters")) {
+        localStorage.setItem("circuit_chapters", JSON.stringify(defaultData.chapters));
+      }
+      if (!localStorage.getItem("circuit_problems")) {
+        localStorage.setItem("circuit_problems", JSON.stringify(defaultData.problems));
+      }
+      
+      const chapters = getChapters();
+      if (chapters.length > 0 && !chapters.some(c => c.id === activeChapterId)) {
+        activeChapterId = chapters[0].id;
+      }
 
-// 3. 將頁面最底部的啟動指令改為呼叫 loadRemoteData()
-loadRemoteData();
+      renderChapters();
+      selectChapter(activeChapterId);
+    }
 
     // 側邊欄手機觸控邏輯
     function toggleMobileSidebar() {
@@ -452,9 +459,9 @@ loadRemoteData();
 
       const filtered = problems.filter(p => {
         const matchChapter = p.chapterId === activeChapterId;
-        const matchSearch = p.num.toLowerCase().includes(searchQuery) || 
-                            p.topic.toLowerCase().includes(searchQuery) || 
-                            p.question.toLowerCase().includes(searchQuery);
+        const matchSearch = (p.num || "").toLowerCase().includes(searchQuery) || 
+                            (p.topic || "").toLowerCase().includes(searchQuery) || 
+                            (p.question || "").toLowerCase().includes(searchQuery);
         return matchChapter && matchSearch;
       });
 
@@ -669,8 +676,8 @@ loadRemoteData();
     function openModal(id) { document.getElementById(id).style.display = 'flex'; }
     function closeModal(id) { document.getElementById(id).style.display = 'none'; }
 
-    // 啟動頁面
-    initApp();
+    // 啟動頁面並下載遠端 JSON
+    loadRemoteData();
   </script>
 </body>
 </html>
