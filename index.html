@@ -1,558 +1,563 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>電路學學習歷程與作業本</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- MathJax 3 用於數學公式渲染 -->
-    <script>
-        window.MathJax = {
-            tex: {
-                inlineMath: [['$', '$'], ['\\(', '\\)']],
-                displayMath: [['$$', '$$'], ['\\[', '\\]']]
-            },
-            svg: { fontCache: 'global' }
-        };
-    </script>
-    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
-        .tab-active { background-color: #2563eb; color: #ffffff; }
-        .tab-inactive { background-color: #f3f4f6; color: #374151; }
-        .tab-inactive:hover { background-color: #e5e7eb; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>電路學學習歷程與作業本</title>
+  <!-- MathJax 3 數學公式渲染引擎 -->
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']]
+      },
+      svg: { fontCache: 'global' }
+    };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --bg-gray: #f8fafc;
+      --card-bg: #ffffff;
+      --border: #e2e8f0;
+      --text-main: #1e293b;
+      --text-muted: #64748b;
+      --sidebar-width: 280px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background-color: var(--bg-gray);
+      color: var(--text-main);
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+    }
+    /* 側邊欄 */
+    .sidebar {
+      width: var(--sidebar-width);
+      background-color: var(--card-bg);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+    }
+    .sidebar-header {
+      padding: 20px;
+      border-bottom: 1px solid var(--border);
+    }
+    .sidebar-header h1 { font-size: 1.2rem; font-weight: 700; color: var(--primary); }
+    .sidebar-menu { flex: 1; overflow-y: auto; padding: 15px; }
+    .menu-item {
+      padding: 12px 16px;
+      margin-bottom: 8px;
+      border-radius: 8px;
+      cursor: pointer;
+      color: var(--text-main);
+      transition: all 0.2s;
+    }
+    .menu-item:hover { background-color: #f1f5f9; }
+    .menu-item.active { background-color: #eff6ff; color: var(--primary); font-weight: 600; }
+    .sidebar-actions { padding: 15px; border-top: 1px solid var(--border); display: flex; flex-direction: column; gap: 8px; }
+    
+    /* 按鈕樣式 */
+    .btn {
+      width: 100%;
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: white;
+      cursor: pointer;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: background 0.2s;
+    }
+    .btn:hover { background: #f1f5f9; }
+    .btn-primary { background: var(--primary); color: white; border: none; }
+    .btn-primary:hover { background: var(--primary-hover); }
+    .btn-success { background: #10b981; color: white; border: none; }
+    .btn-success:hover { background: #059669; }
+
+    /* 主內容區 */
+    .main-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+    .top-bar {
+      padding: 15px 30px;
+      background: var(--card-bg);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .search-input {
+      width: 300px;
+      padding: 8px 14px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      outline: none;
+    }
+    .content-area { flex: 1; overflow-y: auto; padding: 30px; }
+    
+    /* 題目卡片 */
+    .problem-card {
+      background: var(--card-bg);
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      padding: 24px;
+      margin-bottom: 24px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    .problem-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #f1f5f9;
+    }
+    .problem-num { font-weight: 700; color: var(--primary); font-size: 1.1rem; }
+    .problem-topic { background: #e0e7ff; color: #3730a3; padding: 2px 8px; border-radius: 4px; font-size: 0.85rem; }
+    .problem-q { font-size: 1rem; line-height: 1.6; margin-bottom: 16px; font-weight: 500; }
+    .problem-sol {
+      background: #f8fafc;
+      border-left: 4px solid var(--primary);
+      padding: 16px;
+      border-radius: 0 8px 8px 0;
+      line-height: 1.6;
+    }
+
+    /* Modal 對話盒 */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.5);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+    .modal-content {
+      background: white;
+      padding: 24px;
+      border-radius: 10px;
+      width: 500px;
+      max-width: 90%;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    .form-group { margin-bottom: 16px; }
+    .form-group label { display: block; margin-bottom: 6px; font-weight: 600; font-size: 0.9rem; }
+    .form-group input, .form-group textarea, .form-group select {
+      width: 100%; padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px;
+    }
+  </style>
 </head>
-<body class="bg-slate-50 min-h-screen flex flex-col md:flex-row text-slate-800">
+<body>
 
-    <!-- 側邊導覽欄 Sidebar -->
-    <aside class="w-full md:w-80 bg-white border-r border-slate-200 flex flex-col shrink-0">
-        <div class="p-5 border-b border-slate-200">
-            <h1 class="text-xl font-bold text-slate-900 flex items-center gap-2">
-                ⚡ 電路學學習歷程
-            </h1>
-            <p class="text-xs text-slate-500 mt-1">自主學習與作業解題紀錄系統</p>
-        </div>
-
-        <!-- 章節單元選單 -->
-        <div class="p-4 flex-1 overflow-y-auto space-y-1" id="chapterNav">
-            <!-- 由 JS 動態生成章節列表 -->
-        </div>
-
-        <!-- 側邊欄操作按鈕區 -->
-        <div class="p-4 border-t border-slate-200 space-y-2 bg-slate-50">
-            <button onclick="openAddModal()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg shadow-sm text-sm flex items-center justify-center gap-1 transition">
-                <span>➕</span> 新增作業題目
-            </button>
-            <div class="grid grid-cols-2 gap-2">
-                <button onclick="exportData()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-medium py-2 px-2 rounded-lg transition text-center">
-                    📤 匯出 JSON
-                </button>
-                <button onclick="openImportModal()" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-medium py-2 px-2 rounded-lg transition text-center">
-                    📥 匯入 JSON
-                </button>
-            </div>
-            <button onclick="resetDefaultData()" class="w-full bg-slate-200 hover:bg-rose-100 hover:text-rose-600 text-slate-600 text-xs font-medium py-1.5 px-2 rounded-lg transition text-center mt-1">
-                ↺ 重置為預設題目
-            </button>
-        </div>
-    </aside>
-
-    <!-- 主要內容區 Main Content -->
-    <main class="flex-1 flex flex-col h-screen overflow-hidden">
-        <!-- 頂部列：章節標題與搜尋列 -->
-        <header class="bg-white border-b border-slate-200 p-4 px-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shrink-0">
-            <div>
-                <h2 id="currentChapterTitle" class="text-2xl font-bold text-slate-800">載入中...</h2>
-                <p id="currentChapterDesc" class="text-xs text-slate-500 mt-0.5"></p>
-            </div>
-            <div class="relative w-full sm:w-64">
-                <input type="text" id="searchInput" oninput="filterProblems()" placeholder="搜尋題號或關鍵字..." 
-                       class="w-full pl-9 pr-4 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
-                <span class="absolute left-3 top-2.5 text-slate-400 text-sm">🔍</span>
-            </div>
-        </header>
-
-        <!-- 題目內容列表展示區 -->
-        <section class="flex-1 overflow-y-auto p-6 space-y-6" id="problemList">
-            <!-- 由 JS 動態生成題目 -->
-        </section>
-    </main>
-
-    <!-- Modal：新增/編輯題目 -->
-    <div id="addModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
-        <div class="bg-white rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] flex flex-col overflow-hidden">
-            <div class="p-4 border-b border-slate-200 flex justify-between items-center">
-                <h3 class="text-lg font-bold text-slate-800">新增作業解題紀錄</h3>
-                <button onclick="closeAddModal()" class="text-slate-400 hover:text-slate-600">✕</button>
-            </div>
-            <div class="p-6 overflow-y-auto space-y-4 flex-1">
-                <div>
-                    <label class="block text-xs font-medium text-slate-700 mb-1">所屬章節</label>
-                    <select id="inputChapter" class="w-full border border-slate-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"></select>
-                </div>
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-xs font-medium text-slate-700 mb-1">題號 (例: 1-4)</label>
-                        <input type="text" id="inputNum" placeholder="1-4" class="w-full border border-slate-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-medium text-slate-700 mb-1">主題 (選填，例: 庫侖定律)</label>
-                        <input type="text" id="inputTopic" placeholder="庫侖定律應用" class="w-full border border-slate-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
-                    </div>
-                </div>
-                <div>
-                    <label class="block text-xs font-medium text-slate-700 mb-1">題目敘述 (支援 LaTeX，例如 $Q_1 = 2 \times 10^{-4}\text{C}$)</label>
-                    <textarea id="inputQuestion" rows="3" class="w-full border border-slate-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="輸入題目內容..."></textarea>
-                </div>
-                <div>
-                    <label class="block text-xs font-medium text-slate-700 mb-1">詳細解答與推導過程 (支援 HTML & LaTeX)</label>
-                    <textarea id="inputSolution" rows="6" class="w-full border border-slate-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="輸入詳細推導步驟..."></textarea>
-                </div>
-            </div>
-            <div class="p-4 border-t border-slate-200 bg-slate-50 flex justify-end gap-2">
-                <button onclick="closeAddModal()" class="px-4 py-2 border border-slate-300 text-slate-600 rounded-lg text-sm hover:bg-slate-100">取消</button>
-                <button onclick="saveProblem()" class="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700 font-medium">儲存紀錄</button>
-            </div>
-        </div>
+  <!-- 側邊欄 -->
+  <div class="sidebar">
+    <div class="sidebar-header">
+      <h1>電路學學習歷程</h1>
     </div>
-
-    <!-- Modal：匯入 JSON -->
-    <div id="importModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
-        <div class="bg-white rounded-xl shadow-xl max-w-md w-full p-6 space-y-4">
-            <h3 class="text-lg font-bold text-slate-800">📥 匯入 JSON 資料備份</h3>
-            <p class="text-xs text-slate-500">選擇匯入模式，並上傳先前提出的 `.json` 檔案：</p>
-            
-            <div class="space-y-2">
-                <label class="flex items-center gap-2 text-sm text-slate-700 cursor-pointer">
-                    <input type="radio" name="importMode" value="merge" checked class="text-blue-600 focus:ring-blue-500">
-                    <span><strong>合併新增</strong> (保留現有資料，僅更新/追加題號)</span>
-                </label>
-                <label class="flex items-center gap-2 text-sm text-slate-700 cursor-pointer">
-                    <input type="radio" name="importMode" value="replace" class="text-blue-600 focus:ring-blue-500">
-                    <span><strong>完全覆蓋</strong> (清空目前資料，替換為匯入內容)</span>
-                </label>
-            </div>
-
-            <div class="mt-2">
-                <input type="file" id="importFileInput" accept=".json" class="block w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
-            </div>
-
-            <div class="flex justify-end gap-2 pt-2">
-                <button onclick="closeImportModal()" class="px-4 py-2 border border-slate-300 text-slate-600 rounded-lg text-sm hover:bg-slate-100">取消</button>
-                <button onclick="processImport()" class="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm hover:bg-indigo-700 font-medium">確認匯入</button>
-            </div>
-        </div>
+    <div class="sidebar-menu" id="chapterList">
+      <!-- 動態載入章節列表 -->
     </div>
+    <div class="sidebar-actions">
+      <button class="btn btn-primary" onclick="openModal('addProblemModal')">➕ 新增作業題目</button>
+      <button class="btn" onclick="openModal('addChapterModal')">📁 新增章節單元</button>
+      <hr style="border: 0; border-top: 1px solid var(--border); my: 4px;">
+      <button class="btn btn-success" id="ghSyncBtn" onclick="syncToGitHub()">☁️ 一鍵同步至 GitHub</button>
+      <button class="btn" onclick="configureGitHub()">⚙️ 設定 GitHub 權限</button>
+      <hr style="border: 0; border-top: 1px solid var(--border); my: 4px;">
+      <button class="btn" onclick="openModal('importModal')">📥 匯入 JSON 檔案</button>
+      <button class="btn" onclick="exportData()">📤 匯出 JSON 備份</button>
+    </div>
+  </div>
 
-    <!-- JavaScript 邏輯引擎 -->
-    <script>
-        // 預設預載資料結構 (包含 1-4, 1-5, 1-6, 1-8, 1-10, 1-13)
-        const defaultData = {
-            chapters: [
-                { id: "ch1", title: "第一章 基本概念", desc: "靜電力、庫侖定律、元件特性與基本訊號波形" },
-                { id: "ch2", title: "第二章 基本電路定律", desc: "歐姆定律、克希荷夫電路定律 (KCL/KVL)" },
-                { id: "ch3", title: "第三章 電路分析技術", desc: "節點電壓法、網目電流法與重疊定理" }
-            ],
-            problems: [
-                {
-                    id: "p1-4",
-                    chapterId: "ch1",
-                    num: "1-4",
-                    topic: "庫侖靜電力計算",
-                    question: "在真空中，若有 $2 \\times 10^{-4}\\text{ C}$ 之正電荷與 $4 \\times 10^{-5}\\text{ C}$ 之負電荷，相距 $3\\text{ m}$，試求其間之靜電力。",
-                    solution: `
-                        <p class="mb-2"><strong>已知條件：</strong> $Q_1 = +2 \\times 10^{-4}\\text{ C}$, $Q_2 = -4 \\times 10^{-5}\\text{ C}$, 距離 $r = 3\\text{ m}$, 靜電力常數 $k = 9 \\times 10^9\\text{ N}\\cdot\\text{m}^2/\\text{C}^2$。</p>
-                        <p class="mb-2">根據庫侖定律公式：</p>
-                        <p class="my-2 bg-slate-50 p-2 rounded text-center">$$F = k \\frac{|Q_1 Q_2|}{r^2}$$</p>
-                        <p class="mb-2">代入數值：</p>
-                        <p class="my-2 bg-slate-50 p-2 rounded text-center">$$F = (9 \\times 10^9) \\times \\frac{(2 \\times 10^{-4}) \\times (4 \\times 10^{-5})}{3^2} = 9 \\times 10^9 \\times \\frac{8 \\times 10^{-9}}{9} = 8\\text{ N}$$</p>
-                        <p class="text-emerald-700 font-medium">答：$8\\text{ N}$ 吸引力（正負電荷相吸）。</p>
-                    `
-                },
-                {
-                    id: "p1-5",
-                    chapterId: "ch1",
-                    num: "1-5",
-                    topic: "靜電單位 (SC) 與靜電力",
-                    question: "有 $A$、$B$ 兩帶電球體相距 $20\\text{ cm}$，且已知兩球體間具有 $1\\text{ N}$ 的斥力，若 $A$ 球帶有 $5 \\times 10^3\\text{ SC}$ 的負電荷，試問 $B$ 球所帶電量及電荷種類為何？",
-                    solution: `
-                        <p class="mb-2"><strong>觀念解析：</strong> 1 Statcoulomb (SC / 靜庫侖) 於 CGS 制中，定義為兩相距 $1\\text{ cm}$ 之相等電荷受力 $1\\text{ dyn}$。單位換算關係為：$1\\text{ N} = 10^5\\text{ dyn}$。</p>
-                        <p class="mb-2">在 CGS 制下庫侖定律公式為 $F(\\text{dyn}) = \\frac{|q_A q_B|}{r^2(\\text{cm}^2)}$。</p>
-                        <p class="mb-2">已知 $F = 1\\text{ N} = 10^5\\text{ dyn}$，$r = 20\\text{ cm}$，$q_A = -5 \\times 10^3\\text{ SC}$：</p>
-                        <p class="my-2 bg-slate-50 p-2 rounded text-center">$$10^5 = \\frac{(5 \\times 10^3) \\cdot |q_B|}{20^2} = \\frac{5000 \\cdot |q_B|}{400} = 12.5 \\cdot |q_B|$$</p>
-                        <p class="my-2 bg-slate-50 p-2 rounded text-center">$$|q_B| = \\frac{10^5}{12.5} = 8000\\text{ SC} = 8 \\times 10^3\\text{ SC}$$</p>
-                        <p class="text-emerald-700 font-medium">答：因為相互為斥力，故電性相同；$B$ 球帶有 $-8 \\times 10^3\\text{ SC}$ 之負電荷。</p>
-                    `
-                },
-                {
-                    id: "p1-6",
-                    chapterId: "ch1",
-                    num: "1-6",
-                    topic: "庫侖定律比例推導",
-                    question: "兩帶電金屬球相距 $2\\text{ cm}$，已知其間之斥力為 $10\\text{ 達因}$，若其中一帶電體之電荷加倍，兩球之距離亦加倍時，斥力應為若干？",
-                    solution: `
-                        <p class="mb-2"><strong>比例推導：</strong> 根據庫侖定律 $F = k \\frac{q_1 q_2}{r^2}$，受力大小與電荷乘積成正比，與距離平方成反比。</p>
-                        <p class="mb-2">設改變後的斥力為 $F'$：</p>
-                        <p class="my-2 bg-slate-50 p-2 rounded text-center">$$F' = k \\frac{(2q_1) \\cdot q_2}{(2r)^2} = k \\frac{2 q_1 q_2}{4 r^2} = \\frac{2}{4} \\left(k \\frac{q_1 q_2}{r^2}\\right) = \\frac{1}{2} F$$</p>
-                        <p class="my-2 bg-slate-50 p-2 rounded text-center">$$F' = \\frac{1}{2} \\times 10\\text{ dyn} = 5\\text{ dyn}$$</p>
-                        <p class="text-emerald-700 font-medium">答：$5\\text{ 達因 (dyn)}$。</p>
-                    `
-                },
-                {
-                    id: "p1-8",
-                    chapterId: "ch1",
-                    num: "1-8",
-                    topic: "理想電源與跨壓分析",
-                    question: "下圖所示電路，試求跨於線性電阻 $R_1\\ 1\\Omega$ 兩端的電壓。",
-                    solution: `
-                        <p class="mb-2"><strong>電路觀念：</strong> 電路中包含一個 $2\\text{V}$ 的獨立電壓源、一個 $1\\Omega$ 的線性電阻 $R_1$、一個 $3\\Omega$ 的電阻 $R_2$ 與一個 $1\\text{A}$ 的電流源。</p>
-                        <p class="mb-2">觀察電路拓樸結構，$2\\text{V}$ 獨立電壓源直接並聯於電阻 $R_1$ 兩端節點。</p>
-                        <p class="mb-2">根據理想電壓源特性：不論兩端連接何種電路元件，其兩端電壓恆保持等於電源輸出電壓。</p>
-                        <p class="my-2 bg-slate-50 p-2 rounded text-center">$$V_{R1} = V_S = 2\\text{ V}$$</p>
-                        <p class="text-emerald-700 font-medium">答：$2\\text{ (V)}$。</p>
-                    `
-                },
-                {
-                    id: "p1-10",
-                    chapterId: "ch1",
-                    num: "1-10",
-                    topic: "非時變元件時域 $v-i$ 關係",
-                    question: "下圖所示之電路是由線性非時變元件所組成，其輸入電流 $i(t) = e^{-\\frac{1}{2}t}\\text{ A}$，試求當 $t > 0$ 時之 $v_R(t)$、$v_C(t)$ 和 $v_L(t)$。其中 $R = 10\\Omega$，$L = 5\\text{H}$，$C = 0.1\\text{F}$ 且 $v_C(0) = 0$。",
-                    solution: `
-                        <div class="space-y-3">
-                            <div>
-                                <h5 class="font-bold text-slate-700">1. 計算電組電壓 $v_R(t)$：</h5>
-                                <p>利用歐姆定律：$$v_R(t) = R \\cdot i(t) = 10 \\cdot e^{-\\frac{1}{2}t} = 10e^{-\\frac{1}{2}t}\\text{ V}$$</p>
-                            </div>
-                            <div>
-                                <h5 class="font-bold text-slate-700">2. 計算電感電壓 $v_L(t)$：</h5>
-                                <p>利用電感微分特性 $v_L(t) = L \\frac{di(t)}{dt}$：</p>
-                                <p>$$v_L(t) = 5 \\cdot \\frac{d}{dt}\\left(e^{-\\frac{1}{2}t}\\right) = 5 \\cdot \\left(-\\frac{1}{2}e^{-\\frac{1}{2}t}\\right) = -2.5e^{-\\frac{1}{2}t}\\text{ V}$$</p>
-                            </div>
-                            <div>
-                                <h5 class="font-bold text-slate-700">3. 計算電容電壓 $v_C(t)$：</h5>
-                                <p>利用電容積分特性 $v_C(t) = \\frac{1}{C} \\int_0^t i(\\tau) d\\tau + v_C(0)$：</p>
-                                <p>$$v_C(t) = \\frac{1}{0.1} \\int_0^t e^{-\\frac{1}{2}\\tau} d\\tau + 0 = 10 \\cdot \\left[ -2e^{-\\frac{1}{2}\\tau} \\right]_0^t = -20 \\left( e^{-\\frac{1}{2}t} - 1 \\right) = 20 - 20e^{-\\frac{1}{2}t}\\text{ V}$$</p>
-                            </div>
-                            <p class="text-emerald-700 font-medium">答：$v_R(t) = 10e^{-\\frac{1}{2}t}\\text{ V}$， $v_L(t) = -2.5e^{-\\frac{1}{2}t}\\text{ V}$， $v_C(t) = 20 - 20e^{-\\frac{1}{2}t}\\text{ V}$。</p>
-                        </div>
-                    `
-                },
-                {
-                    id: "p1-13",
-                    chapterId: "ch1",
-                    num: "1-13",
-                    topic: "奇異函數與訊號波形繪製",
-                    question: "試畫出下列各函數之波形：(1) $3u(t) - 3u(t-2)$、(5) $\\delta(t) - \\delta(t-1) + \\delta(t-2)$、(6) $u(t) - 2u(t-1)$、(8) $u(t-1) + u(t-2)$、(9) $r(t)u(t) - r(t-1)u(t-1)$、(10) $P_{1/2}(t-2)$",
-                    solution: `
-                        <div class="space-y-4">
-                            <div>
-                                <h5 class="font-bold text-slate-700">(1) $3u(t) - 3u(t-2)$</h5>
-                                <p class="text-xs text-slate-500 mb-1">寬度為 2，振幅高度為 3 的矩形脈波。</p>
-                                <div class="bg-slate-50 p-2 rounded border font-mono text-xs">
-                                    f(t) ↑<br>
-                                     3  |──────┐<br>
-                                        |      |<br>
-                                     0 ─┴──────┴──────&gt; t<br>
-                                        0      2
-                                </div>
-                            </div>
-                            <div>
-                                <h5 class="font-bold text-slate-700">(5) $\\delta(t) - \\delta(t-1) + \\delta(t-2)$</h5>
-                                <p class="text-xs text-slate-500 mb-1">三個在 $t=0, 1, 2$ 處的單位脈衝。</p>
-                                <div class="bg-slate-50 p-2 rounded border font-mono text-xs">
-                                     ↑ (1)     ↑ (1)<br>
-                                    ─┼─────────┼───────&gt; t<br>
-                                     0 │       2<br>
-                                       ↓ (-1) [t=1]
-                                </div>
-                            </div>
-                            <div>
-                                <h5 class="font-bold text-slate-700">(6) $u(t) - 2u(t-1)$</h5>
-                                <p class="text-xs text-slate-500 mb-1">$t \\in [0, 1)$ 為 1，在 $t \\ge 1$ 降至 -1。</p>
-                                <div class="bg-slate-50 p-2 rounded border font-mono text-xs">
-                                     1  |──┐<br>
-                                     0 ─┼──┼──────&gt; t<br>
-                                    -1  |  └───...<br>
-                                        0  1
-                                </div>
-                            </div>
-                            <div>
-                                <h5 class="font-bold text-slate-700">(8) $u(t-1) + u(t-2)$</h5>
-                                <p class="text-xs text-slate-500 mb-1">$t &lt; 1$ 為 0；$1 \\le t &lt; 2$ 為 1；$t \\ge 2$ 階梯上升至 2。</p>
-                                <div class="bg-slate-50 p-2 rounded border font-mono text-xs">
-                                     2  |         ┌────...<br>
-                                     1  |    ┌────┘<br>
-                                     0 ─┴────┴─────────&gt; t<br>
-                                        0    1    2
-                                </div>
-                            </div>
-                            <div>
-                                <h5 class="font-bold text-slate-700">(9) $r(t)u(t) - r(t-1)u(t-1)$</h5>
-                                <p class="text-xs text-slate-500 mb-1">$t \\in [0, 1]$ 斜率為 1 上升，過 $t=1$ 後斜率歸 0 並維持於 1。</p>
-                                <div class="bg-slate-50 p-2 rounded border font-mono text-xs">
-                                     1  |    ┌────────...<br>
-                                        |  ╱<br>
-                                     0 ─┴─┴───────────&gt; t<br>
-                                        0 1
-                                </div>
-                            </div>
-                            <div>
-                                <h5 class="font-bold text-slate-700">(10) $P_{1/2}(t-2)$</h5>
-                                <p class="text-xs text-slate-500 mb-1">寬度為 $0.5$（半徑為 $0.25$）、中心點於 $t=2$ 的矩形脈波 ($t \\in [1.75, 2.25]$ 高度為 1)。</p>
-                                <div class="bg-slate-50 p-2 rounded border font-mono text-xs">
-                                     1  |     ┌──┐<br>
-                                     0 ─┴─────┴──┴─────&gt; t<br>
-                                        0    1.75 2.25
-                                </div>
-                            </div>
-                        </div>
-                    `
-                }
-            ]
+  <!-- 主要顯示區 -->
+  <div class="main-content">
+    <div class="top-bar">
+      <h2 id="currentChapterTitle">選擇單元中...</h2>
+      <input type="text" class="search-input" id="searchInput" placeholder="搜尋題號或關鍵字..." oninput="renderProblems()">
+    </div>
+    <div class="content-area" id="problemContainer">
+      <!-- 動態載入題目內容 -->
+    </div>
+  </div>
+
+  <!-- Modal 1: 新增題目 -->
+  <div class="modal" id="addProblemModal">
+    <div class="modal-content">
+      <h3>➕ 新增作業題目</h3>
+      <br>
+      <div class="form-group">
+        <label>選擇章節</label>
+        <select id="pChapterSelect"></select>
+      </div>
+      <div class="form-group">
+        <label>題號 (如 2-1)</label>
+        <input type="text" id="pNum" placeholder="2-1">
+      </div>
+      <div class="form-group">
+        <label>主題 / 觀念</label>
+        <input type="text" id="pTopic" placeholder="線性性質應用">
+      </div>
+      <div class="form-group">
+        <label>題目敘述 (支援 LaTeX)</label>
+        <textarea id="pQuestion" rows="3"></textarea>
+      </div>
+      <div class="form-group">
+        <label>詳細解析 (支援 HTML 與 LaTeX)</label>
+        <textarea id="pSolution" rows="5"></textarea>
+      </div>
+      <button class="btn btn-primary" onclick="saveProblem()">儲存題目</button>
+      <button class="btn" onclick="closeModal('addProblemModal')" style="margin-top: 8px;">取消</button>
+    </div>
+  </div>
+
+  <!-- Modal 2: 新增章節 -->
+  <div class="modal" id="addChapterModal">
+    <div class="modal-content">
+      <h3>📁 新增章節單元</h3>
+      <br>
+      <div class="form-group">
+        <label>章節 ID (如 ch3)</label>
+        <input type="text" id="cId" placeholder="ch3">
+      </div>
+      <div class="form-group">
+        <label>章節名稱</label>
+        <input type="text" id="cTitle" placeholder="第三章 網目與節點分析">
+      </div>
+      <div class="form-group">
+        <label>簡短描述</label>
+        <input type="text" id="cDesc" placeholder="KCL、KVL進階網路分析">
+      </div>
+      <button class="btn btn-primary" onclick="saveChapter()">儲存章節</button>
+      <button class="btn" onclick="closeModal('addChapterModal')" style="margin-top: 8px;">取消</button>
+    </div>
+  </div>
+
+  <!-- Modal 3: 匯入資料 -->
+  <div class="modal" id="importModal">
+    <div class="modal-content">
+      <h3>📥 匯入 JSON 資料檔</h3>
+      <br>
+      <div class="form-group">
+        <label>選擇匯入模式</label>
+        <select id="importMode">
+          <option value="merge">合併新增（保留原有資料，更新重複題目）</option>
+          <option value="overwrite">完全覆蓋（替換目前所有資料）</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>選取 JSON 檔案</label>
+        <input type="file" id="importFile" accept=".json">
+      </div>
+      <button class="btn btn-primary" onclick="processImport()">確認匯入</button>
+      <button class="btn" onclick="closeModal('importModal')" style="margin-top: 8px;">取消</button>
+    </div>
+  </div>
+
+  <script>
+    // 預設初次載入資料
+    const defaultData = {
+      chapters: [
+        { id: "ch1", title: "第一章 基本概念", desc: "靜電力、庫侖定律與元件特性" },
+        { id: "ch2", title: "第二章 電阻電路與直流電路", desc: "線性性質、電源轉換、等效電阻與KVL/KCL" }
+      ],
+      problems: [
+        {
+          id: "p2-1", chapterId: "ch2", num: "2-1", topic: "線性性質應用",
+          question: "如下圖所示，若 $V_o = 1\\text{V}$，試利用線性性質求此電路 $V_o$ 的實際值。",
+          solution: "<p><b>解析：</b>設 $V_o' = 1\\text{V}$，反推電源為 $V_s' = 2.5\\text{V}$。根據線性比例：$$V_o = 1\\text{V} \\times \\frac{40\\text{V}}{2.5\\text{V}} = 16\\text{V}$$</p>"
+        }
+      ]
+    };
+
+    let activeChapterId = "ch2";
+
+    // 初始化 App
+    function initApp() {
+      if (!localStorage.getItem("circuit_chapters")) {
+        localStorage.setItem("circuit_chapters", JSON.stringify(defaultData.chapters));
+      }
+      if (!localStorage.getItem("circuit_problems")) {
+        localStorage.setItem("circuit_problems", JSON.stringify(defaultData.problems));
+      }
+      renderChapters();
+      selectChapter(activeChapterId);
+    }
+
+    // 取得資料
+    function getChapters() { return JSON.parse(localStorage.getItem("circuit_chapters") || "[]"); }
+    function getProblems() { return JSON.parse(localStorage.getItem("circuit_problems") || "[]"); }
+
+    // 渲染章節選單
+    function renderChapters() {
+      const chapters = getChapters();
+      const container = document.getElementById("chapterList");
+      const pSelect = document.getElementById("pChapterSelect");
+      
+      container.innerHTML = "";
+      pSelect.innerHTML = "";
+
+      chapters.forEach(c => {
+        const item = document.createElement("div");
+        item.className = `menu-item ${c.id === activeChapterId ? 'active' : ''}`;
+        item.onclick = () => selectChapter(c.id);
+        item.innerHTML = `<div>${c.title}</div><small style="color:var(--text-muted);">${c.desc}</small>`;
+        container.appendChild(item);
+
+        pSelect.innerHTML += `<option value="${c.id}">${c.title}</option>`;
+      });
+    }
+
+    // 切換當前章節
+    function selectChapter(chId) {
+      activeChapterId = chId;
+      renderChapters();
+      const chapter = getChapters().find(c => c.id === chId);
+      if (chapter) {
+        document.getElementById("currentChapterTitle").innerText = chapter.title;
+      }
+      renderProblems();
+    }
+
+    // 渲染題目清單
+    function renderProblems() {
+      const problems = getProblems();
+      const searchQuery = document.getElementById("searchInput").value.toLowerCase();
+      const container = document.getElementById("problemContainer");
+      container.innerHTML = "";
+
+      const filtered = problems.filter(p => {
+        const matchChapter = p.chapterId === activeChapterId;
+        const matchSearch = p.num.toLowerCase().includes(searchQuery) || 
+                            p.topic.toLowerCase().includes(searchQuery) || 
+                            p.question.toLowerCase().includes(searchQuery);
+        return matchChapter && matchSearch;
+      });
+
+      if (filtered.length === 0) {
+        container.innerHTML = `<p style="text-align:center; color:var(--text-muted); margin-top:40px;">此章節目前無相關題目或無符合搜尋條件之項目。</p>`;
+        return;
+      }
+
+      filtered.forEach(p => {
+        const card = document.createElement("div");
+        card.className = "problem-card";
+        card.innerHTML = `
+          <div class="problem-header">
+            <span class="problem-num">題目 ${p.num}</span>
+            <span class="problem-topic">${p.topic}</span>
+          </div>
+          <div class="problem-q">${p.question}</div>
+          <div class="problem-sol">${p.solution}</div>
+        `;
+        container.appendChild(card);
+      });
+
+      // 觸發 MathJax 重新渲染公式
+      if (window.MathJax && window.MathJax.typesetPromise) {
+        MathJax.typesetPromise();
+      }
+    }
+
+    // 新增題目與章節
+    function saveProblem() {
+      const newP = {
+        id: "p_" + Date.now(),
+        chapterId: document.getElementById("pChapterSelect").value,
+        num: document.getElementById("pNum").value,
+        topic: document.getElementById("pTopic").value,
+        question: document.getElementById("pQuestion").value,
+        solution: document.getElementById("pSolution").value
+      };
+      const problems = getProblems();
+      problems.push(newP);
+      localStorage.setItem("circuit_problems", JSON.stringify(problems));
+      closeModal('addProblemModal');
+      renderProblems();
+    }
+
+    function saveChapter() {
+      const newC = {
+        id: document.getElementById("cId").value,
+        title: document.getElementById("cTitle").value,
+        desc: document.getElementById("cDesc").value
+      };
+      const chapters = getChapters();
+      chapters.push(newC);
+      localStorage.setItem("circuit_chapters", JSON.stringify(chapters));
+      closeModal('addChapterModal');
+      renderChapters();
+    }
+
+    // 本地匯出與匯入
+    function exportData() {
+      const data = { chapters: getChapters(), problems: getProblems() };
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `data.json`;
+      a.click();
+    }
+
+    function processImport() {
+      const fileInput = document.getElementById("importFile");
+      const mode = document.getElementById("importMode").value;
+      if (!fileInput.files[0]) return alert("請先選取 JSON 檔案！");
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const imported = JSON.parse(e.target.result);
+          if (mode === "overwrite") {
+            localStorage.setItem("circuit_chapters", JSON.stringify(imported.chapters || []));
+            localStorage.setItem("circuit_problems", JSON.stringify(imported.problems || []));
+          } else {
+            // 合併模式
+            const currC = getChapters();
+            const currP = getProblems();
+            (imported.chapters || []).forEach(c => {
+              if (!currC.find(item => item.id === c.id)) currC.push(c);
+            });
+            (imported.problems || []).forEach(p => {
+              const idx = currP.findIndex(item => item.id === p.id || item.num === p.num);
+              if (idx >= 0) currP[idx] = p; else currP.push(p);
+            });
+            localStorage.setItem("circuit_chapters", JSON.stringify(currC));
+            localStorage.setItem("circuit_problems", JSON.stringify(currP));
+          }
+          alert("✅ 匯入成功！");
+          closeModal("importModal");
+          initApp();
+        } catch(err) {
+          alert("❌ 檔案解析失敗，請確認是否為標準 JSON 格式。");
+        }
+      };
+      reader.readAsText(fileInput.files[0]);
+    }
+
+    /* --- GitHub API 一鍵同步邏輯 --- */
+    function getGitHubConfig() {
+      return {
+        owner: localStorage.getItem("gh_owner") || "",
+        repo: localStorage.getItem("gh_repo") || "",
+        path: localStorage.getItem("gh_path") || "data.json",
+        branch: localStorage.getItem("gh_branch") || "main",
+        token: localStorage.getItem("gh_token") || ""
+      };
+    }
+
+    function configureGitHub() {
+      const config = getGitHubConfig();
+      const owner = prompt("請輸入你的 GitHub 帳號 / 組織名稱 (Owner):", config.owner);
+      if (owner === null) return;
+      const repo = prompt("請輸入你的 GitHub 專案儲存庫名稱 (Repo):", config.repo);
+      if (repo === null) return;
+      const path = prompt("請輸入 GitHub 上儲存 JSON 的路徑 (例如 data.json):", config.path || "data.json");
+      if (path === null) return;
+      const branch = prompt("請輸入 GitHub 分支名稱 (例如 main):", config.branch || "main");
+      if (branch === null) return;
+      const token = prompt("請輸入你的 GitHub Personal Access Token (PAT):", config.token);
+      if (token === null) return;
+
+      localStorage.setItem("gh_owner", owner.trim());
+      localStorage.setItem("gh_repo", repo.trim());
+      localStorage.setItem("gh_path", path.trim());
+      localStorage.setItem("gh_branch", branch.trim());
+      localStorage.setItem("gh_token", token.trim());
+
+      alert("✅ GitHub 同步設定已成功儲存！");
+    }
+
+    async function syncToGitHub() {
+      let config = getGitHubConfig();
+      if (!config.owner || !config.repo || !config.token) {
+        alert("尚未完整設定 GitHub 權限，請先點擊「⚙️ 設定 GitHub 權限」填寫資訊。");
+        configureGitHub();
+        config = getGitHubConfig();
+        if (!config.owner || !config.repo || !config.token) return;
+      }
+
+      const syncBtn = document.getElementById("ghSyncBtn");
+      syncBtn.innerText = "⏳ 同步中...";
+      syncBtn.disabled = true;
+
+      try {
+        // 1. 打包當前所有數據
+        const currentData = {
+          chapters: getChapters(),
+          problems: getProblems()
         };
+        const jsonStr = JSON.stringify(currentData, null, 2);
 
-        // 應用程式狀態 State
-        let appData = loadData();
-        let currentChapterId = "ch1";
-
-        // 本地儲存讀取/寫入
-        function loadData() {
-            const saved = localStorage.getItem("circuit_homework_data");
-            if (saved) {
-                try { return JSON.parse(saved); } catch(e) { console.error(e); }
-            }
-            return defaultData;
+        // 正確處理 UTF-8 中文字串轉 Base64
+        const bytes = new TextEncoder().encode(jsonStr);
+        let binary = "";
+        for (let i = 0; i < bytes.byteLength; i++) {
+          binary += String.fromCharCode(bytes[i]);
         }
+        const contentBase64 = btoa(binary);
 
-        function saveData() {
-            localStorage.setItem("circuit_homework_data", JSON.stringify(appData));
-        }
-
-        // 畫面渲染函數
-        function renderSidebar() {
-            const nav = document.getElementById("chapterNav");
-            nav.innerHTML = appData.chapters.map(ch => {
-                const count = appData.problems.filter(p => p.chapterId === ch.id).length;
-                const isActive = ch.id === currentChapterId;
-                return `
-                    <button onclick="switchChapter('${ch.id}')" 
-                            class="w-full text-left p-3 rounded-lg text-sm transition flex items-center justify-between ${isActive ? 'tab-active font-semibold shadow-sm' : 'tab-inactive'}">
-                        <span class="truncate">${ch.title}</span>
-                        <span class="text-xs px-2 py-0.5 rounded-full ${isActive ? 'bg-blue-800 text-white' : 'bg-slate-200 text-slate-600'}">${count} 題</span>
-                    </button>
-                `;
-            }).join('');
-        }
-
-        function renderProblems(filterText = "") {
-            const list = document.getElementById("problemList");
-            const currentCh = appData.chapters.find(c => c.id === currentChapterId);
-            
-            document.getElementById("currentChapterTitle").innerText = currentCh ? currentCh.title : "作業紀錄";
-            document.getElementById("currentChapterDesc").innerText = currentCh ? currentCh.desc : "";
-
-            let problems = appData.problems.filter(p => p.chapterId === currentChapterId);
-
-            if (filterText.trim() !== "") {
-                const query = filterText.toLowerCase();
-                problems = problems.filter(p => 
-                    p.num.toLowerCase().includes(query) || 
-                    (p.topic && p.topic.toLowerCase().includes(query)) ||
-                    p.question.toLowerCase().includes(query)
-                );
-            }
-
-            if (problems.length === 0) {
-                list.innerHTML = `
-                    <div class="text-center py-12 text-slate-400 bg-white rounded-xl border border-dashed border-slate-300">
-                        <p class="text-lg font-medium">目前尚無相關題目</p>
-                        <p class="text-xs mt-1">點擊側邊欄「新增作業題目」加入解題內容</p>
-                    </div>
-                `;
-                return;
-            }
-
-            list.innerHTML = problems.map(p => `
-                <article class="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden hover:shadow-md transition">
-                    <div class="bg-slate-50 px-6 py-3 border-b border-slate-200 flex justify-between items-center">
-                        <div class="flex items-center gap-2">
-                            <span class="bg-blue-600 text-white font-bold text-xs px-2.5 py-1 rounded-md">題號 ${p.num}</span>
-                            ${p.topic ? `<span class="text-xs font-semibold text-slate-600 bg-slate-200 px-2 py-0.5 rounded">${p.topic}</span>` : ''}
-                        </div>
-                        <button onclick="deleteProblem('${p.id}')" class="text-xs text-rose-500 hover:text-rose-700 hover:underline">刪除</button>
-                    </div>
-                    <div class="p-6 space-y-4">
-                        <div>
-                            <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">題目敘述</h4>
-                            <div class="text-slate-800 text-sm leading-relaxed">${p.question}</div>
-                        </div>
-                        <div class="border-t border-slate-100 pt-4">
-                            <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">詳細解析與推導過程</h4>
-                            <div class="text-slate-700 text-sm leading-relaxed bg-white">${p.solution}</div>
-                        </div>
-                    </div>
-                </article>
-            `).join('');
-
-            // 觸發 MathJax 數學公式重新排版渲染
-            if (window.MathJax && window.MathJax.typesetPromise) {
-                MathJax.typesetPromise();
-            }
-        }
-
-        // 操作控制
-        function switchChapter(id) {
-            currentChapterId = id;
-            renderSidebar();
-            renderProblems();
-        }
-
-        function filterProblems() {
-            const query = document.getElementById("searchInput").value;
-            renderProblems(query);
-        }
-
-        function deleteProblem(pId) {
-            if (confirm("確定要刪除此筆作業題目嗎？")) {
-                appData.problems = appData.problems.filter(p => p.id !== pId);
-                saveData();
-                renderSidebar();
-                renderProblems();
-            }
-        }
-
-        // Modal 與儲存處理
-        function openAddModal() {
-            const select = document.getElementById("inputChapter");
-            select.innerHTML = appData.chapters.map(c => `<option value="${c.id}" ${c.id === currentChapterId ? 'selected' : ''}>${c.title}</option>`).join('');
-            document.getElementById("addModal").classList.remove("hidden");
-        }
-
-        function closeAddModal() {
-            document.getElementById("addModal").classList.add("hidden");
-            document.getElementById("inputNum").value = "";
-            document.getElementById("inputTopic").value = "";
-            document.getElementById("inputQuestion").value = "";
-            document.getElementById("inputSolution").value = "";
-        }
-
-        function saveProblem() {
-            const chapterId = document.getElementById("inputChapter").value;
-            const num = document.getElementById("inputNum").value.trim();
-            const topic = document.getElementById("inputTopic").value.trim();
-            const question = document.getElementById("inputQuestion").value.trim();
-            const solution = document.getElementById("inputSolution").value.trim();
-
-            if (!num || !question || !solution) {
-                alert("請填寫完整的題號、題目與解答！");
-                return;
-            }
-
-            const newProblem = {
-                id: "p_" + Date.now(),
-                chapterId,
-                num,
-                topic,
-                question,
-                solution
-            };
-
-            appData.problems.push(newProblem);
-            saveData();
-            closeAddModal();
-            switchChapter(chapterId);
-        }
-
-        // 匯出 / 匯入 / 重置功能
-        function exportData() {
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appData, null, 2));
-            const dlAnchor = document.createElement('a');
-            const date = new Date().toISOString().slice(0,10);
-            dlAnchor.setAttribute("href", dataStr);
-            dlAnchor.setAttribute("download", `circuit_homework_backup_${date}.json`);
-            document.body.appendChild(dlAnchor);
-            dlAnchor.click();
-            dlAnchor.remove();
-        }
-
-        function openImportModal() {
-            document.getElementById("importModal").classList.remove("hidden");
-        }
-
-        function closeImportModal() {
-            document.getElementById("importModal").classList.add("hidden");
-            document.getElementById("importFileInput").value = "";
-        }
-
-        function processImport() {
-            const fileInput = document.getElementById("importFileInput");
-            const mode = document.querySelector('input[name="importMode"]:checked').value;
-
-            if (!fileInput.files || fileInput.files.length === 0) {
-                alert("請選擇要匯入的 JSON 檔案！");
-                return;
-            }
-
-            const file = fileInput.files[0];
-            const reader = new FileReader();
-
-            reader.onload = function(e) {
-                try {
-                    const importedData = JSON.parse(e.target.result);
-                    if (!importedData.chapters || !importedData.problems) {
-                        throw new Error("JSON 檔案格式不符合規範（需包含 chapters 與 problems）");
-                    }
-
-                    if (mode === "replace") {
-                        appData = importedData;
-                    } else {
-                        // 合併模式 (Merge)
-                        importedData.chapters.forEach(ch => {
-                            if (!appData.chapters.some(existingCh => existingCh.id === ch.id)) {
-                                appData.chapters.push(ch);
-                            }
-                        });
-                        importedData.problems.forEach(p => {
-                            const idx = appData.problems.findIndex(existingP => existingP.id === p.id || (existingP.num === p.num && existingP.chapterId === p.chapterId));
-                            if (idx >= 0) {
-                                appData.problems[idx] = p; // 覆蓋舊題號
-                            } else {
-                                appData.problems.push(p); // 新增題號
-                            }
-                        });
-                    }
-
-                    saveData();
-                    closeImportModal();
-                    renderSidebar();
-                    renderProblems();
-                    alert("資料匯入成功！");
-
-                } catch (err) {
-                    alert("匯入失敗：" + err.message);
-                }
-            };
-
-            reader.readAsText(file);
-        }
-
-        function resetDefaultData() {
-            if (confirm("確定要還原為初始預設資料嗎？這將覆蓋現有新增的題目。")) {
-                appData = JSON.parse(JSON.stringify(defaultData));
-                saveData();
-                renderSidebar();
-                renderProblems();
-            }
-        }
-
-        // 初始化 Initialization
-        window.addEventListener("DOMContentLoaded", () => {
-            renderSidebar();
-            renderProblems();
+        // 2. 獲取當前 GitHub 上舊檔的 SHA 碼（避免 Write Conflict）
+        const getUrl = `https://api.github.com/repos/${config.owner}/${config.repo}/contents/${config.path}?ref=${config.branch}`;
+        const getRes = await fetch(getUrl, {
+          headers: { 
+            "Authorization": `Bearer ${config.token}`,
+            "Accept": "application/vnd.github.v3+json"
+          }
         });
-    </script>
+
+        let sha = "";
+        if (getRes.ok) {
+          const fileData = await getRes.json();
+          sha = fileData.sha;
+        }
+
+        // 3. 發送 PUT 請求提交 Commit 更新 GitHub 檔案
+        const putUrl = `https://api.github.com/repos/${config.owner}/${config.repo}/contents/${config.path}`;
+        const putRes = await fetch(putUrl, {
+          method: "PUT",
+          headers: {
+            "Authorization": `Bearer ${config.token}`,
+            "Content-Type": "application/json",
+            "Accept": "application/vnd.github.v3+json"
+          },
+          body: JSON.stringify({
+            message: `chore: 自動更新作業題目資料庫 (${new Date().toLocaleString()})`,
+            content: contentBase64,
+            sha: sha || undefined,
+            branch: config.branch
+          })
+        });
+
+        if (putRes.ok) {
+          alert("🎉 成功同步更新至 GitHub！\n若有啟用 GitHub Pages，網頁內容將會在 1~2 分鐘內更新。");
+        } else {
+          const errData = await putRes.json();
+          alert("❌ 同步失敗：" + (errData.message || "權限不足或設定錯誤"));
+        }
+      } catch (err) {
+        console.error(err);
+        alert("發生網路或系統錯誤，請確認網路連線。");
+      } finally {
+        syncBtn.innerText = "☁️ 一鍵同步至 GitHub";
+        syncBtn.disabled = false;
+      }
+    }
+
+    // 工具函式：開啟/關閉 Modal
+    function openModal(id) { document.getElementById(id).style.display = 'flex'; }
+    function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+
+    // 啟動頁面
+    initApp();
+  </script>
 </body>
 </html>
