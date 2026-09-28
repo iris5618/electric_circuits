@@ -235,6 +235,10 @@
       }
     }
   </style>
+  <!-- 強制瀏覽器不快取頁面，每次開啟都載入最新版 -->
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
 </head>
 <body>
 
@@ -354,7 +358,12 @@
 async function loadRemoteData() {
   try {
     // 加入時間戳記 (?t=...) 防止瀏覽器快取舊的 json 檔
-    const response = await fetch(`data.json?t=${Date.now()}`, { cache: "no-store" });
+    // 網址加上 ?t=${Date.now()}，瀏覽器會以為是全新的請求，不會讀取舊快取
+    const response = await fetch(`data.json?t=${Date.now()}`, { cache: "no-store" })
+  .then(response => response.json())
+  .then(data => {
+    // 處理最新資料
+  });
     if (response.ok) {
       const remoteData = await response.json();
       if (remoteData.chapters && remoteData.problems) {
