@@ -9,6 +9,11 @@
       "id": "ch2",
       "title": "第二章 電阻電路與直流電路",
       "desc": "線性性質、電源轉換、等效電阻與KVL/KCL"
+    },
+    {
+      "id": "ch3",
+      "title": "ch3",
+      "desc": "3"
     }
   ],
   "problems": [
@@ -183,6 +188,150 @@
       "topic": "奇異函數與訊號波形繪製",
       "question": "試畫出下列各函數之波形：(1) $3u(t) - 3u(t-2)$、(5) $\\delta(t) - \\delta(t-1) + \\delta(t-2)$、(6) $u(t) - 2u(t-1)$、(8) $u(t-1) + u(t-2)$、(9) $r(t)u(t) - r(t-1)u(t-1)$、(10) $P_{1/2}(t-2)$",
       "solution": "<p><b>(1) $3u(t) - 3u(t-2)$：</b> 寬度為 2，振幅高度為 3 的矩形脈波。</p><p><b>(5) $\\delta(t) - \\delta(t-1) + \\delta(t-2)$：</b> 三個在 $t=0, 1, 2$ 處的單位脈衝。</p><p><b>(6) $u(t) - 2u(t-1)$：</b> $t \\in [0, 1)$ 為 1，在 $t \\ge 1$ 降至 -1。</p><p><b>(8) $u(t-1) + u(t-2)$：</b> $t < 1$ 為 0；$1 \\le t < 2$ 為 1；$t \\ge 2$ 階梯上升至 2。</p><p><b>(9) $r(t)u(t) - r(t-1)u(t-1)$：</b> $t \\in [0, 1]$ 斜率為 1 上升，過 $t=1$ 後斜率歸 0 並維持於 1。</p><p><b>(10) $P_{1/2}(t-2)$：</b> 寬度為 $0.5$、中心點於 $t=2$ 的矩形脈波 ($t \\in [1.75, 2.25]$ 高度為 1)。</p>"
+    },
+    {
+      "id": "p3-1",
+      "chapterId": "ch3",
+      "num": "3-1",
+      "topic": "分壓公式與歐姆定律",
+      "question": "如下圖所示電路中，若 $v_1(t) = 12\\text{V}$、$v(t) = 30\\text{V}$、$R_2 = 6\\Omega$，試利用分壓公式求出 $R_1$ 和 $i(t)$ 之值。",
+      "solution": "<ol><li><b>求電阻 $R_2$ 兩端的電壓 $v_2(t)$：</b><br>由基爾霍夫電壓定律（KVL）：$$v(t) = v_1(t) + v_2(t) \\implies 30\\text{V} = 12\\text{V} + v_2(t) \\implies v_2(t) = 18\\text{V}$$</li><li><b>求迴路電流 $i(t)$：</b><br>根據歐姆定律：$$i(t) = \\frac{v_2(t)}{R_2} = \\frac{18\\text{V}}{6\\Omega} = 3\\text{A}$$</li><li><b>利用分壓公式求 $R_1$：</b><br>分壓公式為 $v_1(t) = v(t) \\times \\frac{R_1}{R_1 + R_2}$：$$12 = 30 \\times \\frac{R_1}{R_1 + 6} \\implies 12(R_1 + 6) = 30R_1 \\implies 12R_1 + 72 = 30R_1 \\implies 18R_1 = 72 \\implies R_1 = 4\\Omega$$</li></ol>"
+    },
+    {
+      "id": "p3-3",
+      "chapterId": "ch3",
+      "num": "3-3",
+      "topic": "分流定理與並聯電路",
+      "question": "如下圖所示之電路中，試利用分流定理求 $i_1(t)$ 和 $i_2(t)$ 之值。",
+      "solution": "<ol><li><b>計算並聯等效電阻 $R_p$：</b>$$R_p = 6\\Omega \\parallel 12\\Omega = \\frac{6 \\times 12}{6 + 12} = \\frac{72}{18} = 4\\Omega$$</li><li><b>計算總等效電阻 $R_{\\text{total}}$ 及總電流 $i(t)$：</b>$$R_{\\text{total}} = 6\\Omega + R_p = 6\\Omega + 4\\Omega = 10\\Omega$$$$i(t) = \\frac{v(t)}{R_{\\text{total}}} = \\frac{60\\text{V}}{10\\Omega} = 6\\text{A}$$</li><li><b>利用分流定理求 $i_1(t)$ 與 $i_2(t)$：</b>$$i_1(t) = i(t) \\times \\frac{12\\Omega}{6\\Omega + 12\\Omega} = 6\\text{A} \\times \\frac{12}{18} = 4\\text{A}$$$$i_2(t) = i(t) \\times \\frac{6\\Omega}{6\\Omega + 12\\Omega} = 6\\text{A} \\times \\frac{6}{18} = 2\\text{A}$$</li></ol>"
+    },
+    {
+      "id": "p3-5",
+      "chapterId": "ch3",
+      "num": "3-5",
+      "topic": "分流與分壓定理之綜合應用",
+      "question": "如下圖所示之電路，試利用分流定理和分壓定理求 $i_1(t)$ 和 $v_1(t)$ 之值。",
+      "solution": "<ol><li><b>計算右側分支電阻與總等效阻值：</b><br>右側分支阻值：$R_{\\text{right}} = 5\\Omega + 3\\Omega = 8\\Omega$<br>並聯部分等效電阻：$$R_p = 4\\Omega \\parallel 8\\Omega = \\frac{4 \\times 8}{4 + 8} = \\frac{32}{12} = \\frac{8}{3}\\Omega$$總電阻：$$R_{\\text{total}} = 4\\Omega + \\frac{8}{3}\\Omega = \\frac{20}{3}\\Omega$$</li><li><b>求總電流 $i(t)$：</b>$$i(t) = \\frac{20\\text{V}}{\\frac{20}{3}\\Omega} = 3\\text{A}$$</li><li><b>使用分流定理求 $i_1(t)$：</b>$$i_1(t) = i(t) \\times \\frac{8\\Omega}{4\\Omega + 8\\Omega} = 3\\text{A} \\times \\frac{8}{12} = 2\\text{A}$$</li><li><b>求右側分支跨壓並使用分壓定理求 $v_1(t)$：</b><br>並聯區塊跨壓：$$v_p(t) = i(t) \\times R_p = 3\\text{A} \\times \\frac{8}{3}\\Omega = 8\\text{V}$$對 $R_{\\text{right}} = 8\\Omega$ 分支使用分壓定理：$$v_1(t) = v_p(t) \\times \\frac{3\\Omega}{5\\Omega + 3\\Omega} = 8\\text{V} \\times \\frac{3}{8} = 3\\text{V}$$</li></ol>"
+    },
+    {
+      "id": "p3-7",
+      "chapterId": "ch3",
+      "num": "3-7",
+      "topic": "階梯電路分析",
+      "question": "試求下圖所示階梯電路的 $i(t)$、$i_1(t)$、$v_1(t)$、$v_2(t)$ 和 $v_3(t)$ 之值。",
+      "solution": "<ol><li><b>由右至左簡化電阻：</b><ul><li>最右側分支串聯：$4\\Omega + 8\\Omega = 12\\Omega$</li><li>與中間垂直 $4\\Omega$ 電阻並聯：$$R_{p1} = 4\\Omega \\parallel 12\\Omega = \\frac{4 \\times 12}{4 + 12} = 3\\Omega$$</li><li>第一階三個 $6\\Omega$ 並聯的等效電阻：$$R_{p2} = 6\\Omega \\parallel 6\\Omega \\parallel 6\\Omega = 2\\Omega$$</li><li>總等效電阻：$$R_T = R_{p2} + R_{p1} = 2\\Omega + 3\\Omega = 5\\Omega$$</li></ul></li><li><b>計算總電流 $i(t)$ 及電壓 $v_3(t)$、$v_2(t)$：</b>$$i(t) = \\frac{45\\text{V}}{R_T} = \\frac{45}{5} = 9\\text{A}$$$$v_3(t) = i(t) \\times R_{p2} = 9\\text{A} \\times 2\\Omega = 18\\text{V}$$$$v_2(t) = i(t) \\times R_{p1} = 9\\text{A} \\times 3\\Omega = 27\\text{V}$$</li><li><b>計算電流 $i_1(t)$：</b><br>$i_1(t)$ 為三個並聯 $6\\Omega$ 電阻中其中一個分支的電流：$$i_1(t) = \\frac{v_3(t)}{6\\Omega} = \\frac{18\\text{V}}{6\\Omega} = 3\\text{A}$$</li><li><b>計算電壓 $v_1(t)$：</b><br>利用分壓定理於右側分支（$4\\Omega + 8\\Omega$）上：$$v_1(t) = v_2(t) \\times \\frac{8\\Omega}{4\\Omega + 8\\Omega} = 27\\text{V} \\times \\frac{8}{12} = 18\\text{V}$$</li></ol>"
+    },
+    {
+      "id": "p3-8",
+      "chapterId": "ch3",
+      "num": "3-8",
+      "topic": "多重分流與階梯網路",
+      "question": "試求下圖電路中 $i_1(t)$ 與 $i_2(t)$ 之值。",
+      "solution": "<ol><li><b>由右至左計算等效電阻：</b><ul><li>最右側分支：$6\\Omega + 6\\Omega = 12\\Omega$</li><li>與 $4\\Omega$ 並聯：$$R_{p1} = 4\\Omega \\parallel 12\\Omega = \\frac{48}{16} = 3\\Omega$$</li><li>與中間 $3\\Omega$ 串聯：$R_{s1} = 3\\Omega + 3\\Omega = 6\\Omega$</li><li>節點 $a-a'$ 右側分支等效阻值為 $6\\Omega$，整體電路為三個 $6\\Omega$ 分支並聯，總等效阻值 $R_T = 2\\Omega$。</li></ul></li><li><b>計算 $i_1(t)$：</b><br>節點 $a-a'$ 處三個並聯分支阻值相等（皆為 $6\\Omega$），總流入電流為 $12\\text{A}$：$$i_1(t) = 3\\text{A}$$</li><li><b>計算 $i_2(t)$：</b><br>流入右側節點之電流經分流計算：$$i_2(t) = 3\\text{A} \\times \\frac{4}{4+12} \\times \\frac{6}{6+6} = \\frac{3}{4}\\text{A}$$</li></ol>"
+    },
+    {
+      "id": "p3-10",
+      "chapterId": "ch3",
+      "num": "3-10",
+      "topic": "重疊定理（Superposition Theorem）",
+      "question": "試利用重疊定理求出下圖所示電路中，流過 $R_2$ 電阻上之電流 $i(t)$。",
+      "solution": "<ol><li><b>步驟一：僅考慮 $36\\text{V}$ 電壓源作用（將 $9\\text{A}$ 電流源開路）</b><br>電路為 $36\\text{V}$ 電壓源與 $R_1 = 12\\Omega$、$R_2 = 6\\Omega$ 串聯：$$i'(t) = \\frac{36\\text{V}}{12\\Omega + 6\\Omega} = \\frac{36}{18} = 2\\text{A} \\quad (\\text{向下})$$</li><li><b>步驟二：僅考慮 $9\\text{A}$ 電流源作用（將 $36\\text{V}$ 電壓源短路）</b><br>電流源 $9\\text{A}$ 流入由 $R_1 = 12\\Omega$ 與 $R_2 = 6\\Omega$ 組成的並聯網路。利用分流定理求流經 $R_2$ 向下的電流 $i''(t)$：$$i''(t) = 9\\text{A} \\times \\frac{12\\Omega}{12\\Omega + 6\\Omega} = 9 \\times \\frac{12}{18} = 6\\text{A} \\quad (\\text{向下})$$</li><li><b>步驟三：重疊相加</b>$$i(t) = i'(t) + i''(t) = 2\\text{A} + 6\\text{A} = 8\\text{A}$$</li></ol>"
+    },
+    {
+      "id": "p3-12",
+      "chapterId": "ch3",
+      "num": "3-12",
+      "topic": "重疊定理於多電源電路之應用",
+      "question": "如下圖所示電路，試用重疊定理求流過 $6\\Omega$ 電阻器之電流 $i(t)$。",
+      "solution": "<ol><li><b>步驟一：僅 $84\\text{V}$ 電壓源作用（$28\\text{V}$ 電壓源短路）</b><ul><li>右側 $6\\Omega \\parallel 12\\Omega = 4\\Omega$</li><li>再與中間 $12\\Omega$ 並聯：$12 \\parallel 4 = 3\\Omega$</li><li>總電阻：$R_{T1} = 4\\Omega + 3\\Omega = 7\\Omega$</li><li>總電流：$I_{T1} = \\frac{84}{7} = 12\\text{A}$</li><li>跨壓：$v_p' = 12\\text{A} \\times 3\\Omega = 36\\text{V}$，分流為：$$i'(t) = \\frac{36\\text{V}}{6\\Omega} = 6\\text{A} \\quad (\\text{向下})$$</li></ul></li><li><b>步驟二：僅 $28\\text{V}$ 電壓源作用（$84\\text{V}$ 電壓源短路）</b><ul><li>左側 $4 \\parallel 12 = 3\\Omega$</li><li>與中央 $6\\Omega$ 並聯：$3 \\parallel 6 = 2\\Omega$</li><li>總電阻：$R_{T2} = 12\\Omega + 2\\Omega = 14\\Omega$</li><li>總電流：$I_{T2} = \\frac{28}{14} = 2\\text{A}$</li><li>跨壓：$v_p'' = 2\\text{A} \\times 2\\Omega = 4\\text{V}$，分流為：$$i''(t) = \\frac{4\\text{V}}{6\\Omega} = 0.67\\text{A} \\quad (\\text{向下})$$</li></ul></li><li><b>步驟三：重疊相加</b>$$i(t) = i'(t) + i''(t) = 6\\text{A} + 0.67\\text{A} = 6.67\\text{A}$$</li></ol>"
+    },
+    {
+      "id": "p3-13",
+      "chapterId": "ch3",
+      "num": "3-13",
+      "topic": "含相依源電路之重疊定理",
+      "question": "試應用重疊定理求下圖之電流 $i(t)$ 之值。",
+      "solution": "<ol><li><b>步驟一：僅 $20\\text{V}$ 獨立源作用（$4\\text{A}$ 獨立源開路，相依源保留）</b><br>設獨立電壓源單獨作用，利用網格／節點分析法列式求解得：$$i'(t) = 0.826\\text{A}$$</li><li><b>步驟二：僅 $4\\text{A}$ 獨立源作用（$20\\text{V}$ 獨立源短路，相依源保留）</b><br>設獨立電流源單獨作用，利用節點分析法列式求解得：$$i''(t) = 1.434\\text{A}$$</li><li><b>步驟三：重疊相加</b>$$i(t) = i'(t) + i''(t) = 0.826\\text{A} + 1.434\\text{A} = 2.26\\text{A}$$</li></ol>"
+    },
+    {
+      "id": "p3-15",
+      "chapterId": "ch3",
+      "num": "3-15",
+      "topic": "相依電源電路分析",
+      "question": "試求下圖含有相依電源及獨立電源電路之 $i(t)$ 值。",
+      "solution": "<ol><li><b>設定節點電位：</b><br>設中間上方節點電位為 $V_1$，右側端點 $A$ 電位為 $V_A$。</li><li><b>列出 KCL 節點方程式：</b>$$\\frac{V_1 - 20}{4} + \\frac{V_1}{6} - 2i(t) + \\frac{V_1 - V_A}{8} = 0$$其中關鍵控制量關係式為：$$i(t) = \\frac{20 - V_1}{4}$$</li><li><b>代入求解 $i(t)$：</b><br>將控制量關係式代入方程中進行簡化與代數求解：$$i(t) = 1.389\\text{A}$$</li></ol>"
+    },
+    {
+      "id": "p3-16",
+      "chapterId": "ch3",
+      "num": "3-16",
+      "topic": "戴維寧定理（Thevenin's Theorem）",
+      "question": "以戴維寧定理求出下圖電路中的 $v_1(t)$ 值。",
+      "solution": "<ol><li><b>求解戴維寧等效電壓 $V_{Th}$（移除 $2\\Omega$ 負載）：</b><br>由 KCL 解出開路兩端之電壓：$$V_{Th} = 6\\text{V}$$</li><li><b>求解戴維寧等效電阻 $R_{Th}$：</b><br>將獨立源關閉（$12\\text{V}$ 電壓源短路、$2\\text{A}$ 電流源開路），由開路端看入：$$R_{Th} = (3\\Omega \\parallel 6\\Omega) + 4\\Omega = 2\\Omega + 4\\Omega = 6\\Omega$$</li><li><b>接回 $2\\Omega$ 負載並利用分壓定理計算 $v_1(t)$：</b>$$v_1(t) = V_{Th} \\times \\frac{2\\Omega}{R_{Th} + 2\\Omega} = 6\\text{V} \\times \\frac{2}{6 + 2} = 6 \\times \\frac{2}{8} = 3\\text{V}$$</li></ol>"
+    },
+    {
+      "id": "p3-17",
+      "chapterId": "ch3",
+      "num": "3-17",
+      "topic": "雙端戴維寧等效簡化",
+      "question": "試利用戴維寧等效電路求出下圖電路中的 $i(t)$ 值。（提示：先求 $AB$ 端以左及 $CD$ 端以右之戴維寧等效電路，再以 KVL 即可求出 $i(t)$ 值）。",
+      "solution": "<ol><li><b>求解 $AB$ 端以左之戴維寧等效電路：</b><ul><li>$V_{Th1} = 4\\text{V} \\times \\frac{2}{2+2} = 2\\text{V}$</li><li>$R_{Th1} = 2\\Omega \\parallel 2\\Omega = 1\\Omega$</li></ul></li><li><b>求解 $CD$ 端以右之戴維寧等效電路：</b><ul><li>$V_{Th2} = 12\\text{V} \\times \\frac{3}{3+6} = 4\\text{V}$</li><li>$R_{Th2} = 3\\Omega \\parallel 6\\Omega = 2\\Omega$</li></ul></li><li><b>串聯中間迴路並應用 KVL 求解 $i(t)$：</b><br>將左右等效電路與中間 $1\\Omega$ 電阻及 $6\\text{V}$ 電壓源串聯，應用 KVL：$$i(t) = \\frac{(2 + 6) - 4}{R_{Th1} + 1 + R_{Th2} + 2} = \\frac{4}{1 + 1 + 2 + 2} = \\frac{4}{4} = 1\\text{A}$$</li></ol>"
+    },
+    {
+      "id": "p3-19",
+      "chapterId": "ch3",
+      "num": "3-19",
+      "topic": "諾頓定理與橋式電路（Norton's Theorem）",
+      "question": "試利用諾頓定理求出下圖中流經 $0.6\\Omega$ 支路的電流 $i(t)$。",
+      "solution": "<ol><li><b>移除 $0.6\\Omega$ 負載求解諾頓等效電阻 $R_N$：</b><br>獨立電源短路後，由 $A-B$ 端看入：$$R_N = (1\\Omega \\parallel 7\\Omega) + (9\\Omega \\parallel 3\\Omega) = \\frac{7}{8} + \\frac{27}{12} = 0.875 + 2.25 = 3.125\\Omega$$</li><li><b>求解短路電流 $I_N$：</b><br>將 $A-B$ 端短路，經基爾霍夫電流定律（KCL）計算得短路電流：$$I_N = 5.96\\text{A}$$</li><li><b>接回 $0.6\\Omega$ 電阻求 $i(t)$：</b><br>由分流定理：$$i(t) = I_N \\times \\frac{R_N}{R_N + 0.6\\Omega} = 5.96\\text{A} \\times \\frac{3.125}{3.125 + 0.6} = 5\\text{A}$$</li></ol>"
+    },
+    {
+      "id": "p3-21",
+      "chapterId": "ch3",
+      "num": "3-21",
+      "topic": "單埠諾頓等效電路",
+      "question": "試求下圖電路中 $a\\text{、}b$ 二端點的諾頓等效電路。",
+      "solution": "<ol><li><b>求解諾頓等效電阻 $R_N$：</b><br>將獨立源關閉（$15\\text{V}$ 電壓源短路、$4\\text{A}$ 電流源開路），從 $a-b$ 端看入精確計算得：$$R_N = 5\\Omega$$</li><li><b>求解短路電流 $I_N$：</b><br>將 $a-b$ 端短路，利用密爾門定理或重疊定理計算流經短路端之電流：$$I_N = 4.5\\text{A}$$</li></ol>"
+    },
+    {
+      "id": "p3-24",
+      "chapterId": "ch3",
+      "num": "3-24",
+      "topic": "並聯電源等效與負載電流比率推導",
+      "question": "如下圖所示之電路，兩電源並聯供電於一負載，設電源之電壓各為 $V_1$ 及 $V_2$，其內阻各為 $R_1$ 及 $R_2$，負載之電阻 $R_3$，試由諾頓定理求出此並聯電源之等效電路，並求此電路負載電流及短路電流之比。",
+      "solution": "<ol><li><b>求解諾頓短路電流 $I_N$：</b><br>將輸出端短路，兩分支短路電流直接相加：$$I_N = \\frac{V_1}{R_1} + \\frac{V_2}{R_2}$$</li><li><b>求解諾頓等效電阻 $R_N$：</b><br>將兩電壓源短路，兩內阻呈現並聯：$$R_N = R_1 \\parallel R_2 = \\frac{R_1 R_2}{R_1 + R_2}$$</li><li><b>計算負載電流 $I'$ 與短路電流 $I_N$ 之比值：</b><br>由分流定理 $I' = I_N \\times \\frac{R_N}{R_N + R_3}$：$$\\frac{I'}{I_N} = \\frac{R_N}{R_N + R_3} = \\frac{\\frac{R_1 R_2}{R_1 + R_2}}{\\frac{R_1 R_2}{R_1 + R_2} + R_3} = \\frac{R_1 R_2}{R_1 R_2 + R_2 R_3 + R_3 R_1}$$</li></ol>"
+    },
+    {
+      "id": "p3-27",
+      "chapterId": "ch3",
+      "num": "3-27",
+      "topic": "最大功率轉移定理（Maximum Power Transfer）",
+      "question": "如下圖所示電路中，試求輸出至 $R$ 的最大功率及 $R$ 值。",
+      "solution": "<ol><li><b>求解戴維寧等效電阻 $R_{Th}$：</b><br>獨立源關閉（$10\\text{A}$ 開路、$100\\text{V}$ 短路），從 $A-B$ 端看入：$$R_{Th} = (5\\Omega + 4\\Omega) + 6\\Omega = 15\\Omega$$根據最大功率轉移定理，當負載阻值 $R = R_{Th} = 15\\Omega$ 時，可獲得最大功率。</li><li><b>求解戴維寧開路電壓 $V_{Th}$：</b><br>由 KVL 迴路分析得：$$V_{Th} = -150\\text{V}$$</li><li><b>計算最大功率 $P_{L\\text{max}}(t)$：</b>$$P_{L\\text{max}}(t) = \\frac{V_{Th}^2}{4 R_{Th}} = \\frac{(-150)^2}{4 \\times 15} = \\frac{22500}{60} = 375\\text{W}$$</li></ol>"
+    },
+    {
+      "id": "p3-29",
+      "chapterId": "ch3",
+      "num": "3-29",
+      "topic": "對稱網路與最大功率轉移",
+      "question": "如下圖所示電路，若一電壓為 $6\\text{V}$，內阻為 $0.1\\Omega$ 之電源直接跨接於 $A$、$D$ 兩端，試求此電路吸收最大功率時 $R$ 的值，並求其由電源吸收的最大功率。",
+      "solution": "<ol><li><b>計算從 $A-D$ 端看入之網路等效電阻 $R_{eq}$：</b><br>利用對稱性及星-三角（Y-$\\Delta$）轉換簡化對稱阻抗網路，求得 $R_{eq} = R$。</li><li><b>最大功率轉移條件：</b><br>負載網路之等效電阻必須等於電源內阻 $r = 0.1\\Omega$：$$R = 0.1\\Omega$$</li><li><b>計算最大吸收功率：</b>$$P_{L\\text{max}}(t) = \\frac{V^2}{4r} = \\frac{6^2}{4 \\times 0.1} = \\frac{36}{0.4} = 90\\text{W}$$</li></ol>"
+    },
+    {
+      "id": "p3-30",
+      "chapterId": "ch3",
+      "num": "3-30",
+      "topic": "戴維寧等效與最大功率轉移",
+      "question": "如下圖所示電路，試求電路中最大功率轉移時的 $R$ 值和最大功率。",
+      "solution": "<ol><li><b>求解戴維寧等效電阻 $R_{Th}$：</b><br>獨立源關閉（$12\\text{V}$ 短路、$2\\text{A}$ 開路），從 $A-B$ 端看入：$$R_{Th} = (6\\Omega \\parallel 12\\Omega) + 3\\Omega + 2\\Omega = 4\\Omega + 3\\Omega + 2\\Omega = 9\\Omega$$故最大功率轉移時負載 $R = R_{Th} = 9\\Omega$。</li><li><b>求解戴維寧開路電壓 $V_{Th}$：</b><br>使用節點電位法求開路電壓：$$V_{Th} = 22\\text{V}$$</li><li><b>計算最大功率 $P_{L\\text{max}}(t)$：</b>$$P_{L\\text{max}}(t) = \\frac{V_{Th}^2}{4 R_{Th}} = \\frac{22^2}{4 \\times 9} = \\frac{484}{36} = 13.44\\text{W}$$</li></ol>"
+    },
+    {
+      "id": "p3-31",
+      "chapterId": "ch3",
+      "num": "3-31",
+      "topic": "最大功率轉移綜合應用",
+      "question": "如下圖所示電路中，試求輸出至 $R$ 的最大功率與電阻 $R$ 的值。",
+      "solution": "<ol><li><b>求解戴維寧等效電阻 $R_{Th}$：</b><br>獨立源關閉（$10\\text{A}$ 開路、$100\\text{V}$ 短路）：$$R_{Th} = (5\\Omega + 4\\Omega) + 6\\Omega = 15\\Omega$$因此當 $R = 15\\Omega$ 時，有最大功率轉移。</li><li><b>求解戴維寧開路電壓 $V_{Th}$：</b><br>由 KCL 解得：$$V_{Th} = -150\\text{V}$$</li><li><b>計算最大功率 $P_{L\\text{max}}(t)$：</b>$$P_{L\\text{max}}(t) = \\frac{150^2}{4 \\times 15} = \\frac{22500}{60} = 375\\text{W}$$</li></ol>"
     }
   ]
 }
