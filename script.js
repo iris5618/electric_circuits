@@ -103,24 +103,43 @@ function renderProblems() {
   const container = document.getElementById('problemList');
   container.innerHTML = '';
 
-  const filtered = appData.problems.filter(p => p.chapterId === currentChapterId);
+  // 1. 篩選當前章節的題目與筆記
+  const filteredProblems = (appData.problems || []).filter(p => p.chapterId === currentChapterId);
+  const filteredNotes = (appData.notes || []).filter(n => n.chapterId === currentChapterId);
 
-  if (filtered.length === 0) {
-    container.innerHTML = '<div style="color: #64748b; text-align: center; padding: 40px;">本章節尚無題目或筆記，請點擊左側「新增筆記」、「新增題目」或「📷 上傳題目圖檔」。</div>';
+  if (filteredProblems.length === 0 && filteredNotes.length === 0) {
+    container.innerHTML = '<div style="color: #64748b; text-align: center; padding: 40px;">本章節尚無題目或筆記。</div>';
     return;
   }
 
-  filtered.forEach(p => {
+  // 2. 渲染題目卡片
+  filteredProblems.forEach(p => {
     const card = document.createElement('div');
     card.className = 'card';
     card.innerHTML = `
       <div class="card-header">
-        <span class="problem-num">${p.num || '筆記'}</span>
+        <span class="problem-num">${p.num}</span>
         <div class="problem-topic">${p.topic}</div>
       </div>
       ${p.question ? `<div class="question-box">${p.question}</div>` : ''}
-      ${p.imageUrl ? `<div style="text-align: center; margin-bottom: 12px;"><img src="${p.imageUrl}" alt="筆記圖片" style="max-width: 100%; max-height: 350px; border-radius: 8px; border: 1px solid var(--border-color);"></div>` : ''}
+      ${p.imageUrl ? `<div style="text-align: center; margin-bottom: 12px;"><img src="${p.imageUrl}" style="max-width: 100%; max-height: 350px; border-radius: 8px;"></div>` : ''}
       <div class="solution-box">${p.solution}</div>
+    `;
+    container.appendChild(card);
+  });
+
+  // 3. 渲染筆記卡片 (包含 note 與 solution 欄位)
+  filteredNotes.forEach(n => {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.innerHTML = `
+      <div class="card-header">
+        <span class="problem-num">${n.num || '📝 筆記'}</span>
+        <div class="problem-topic">${n.topic}</div>
+      </div>
+      ${n.note ? `<div class="question-box" style="background: #f0fdf4; border-left: 3px solid #22c55e;">${n.note}</div>` : ''}
+      ${n.imageUrl ? `<div style="text-align: center; margin-bottom: 12px;"><img src="${n.imageUrl}" style="max-width: 100%; max-height: 350px; border-radius: 8px;"></div>` : ''}
+      ${n.solution ? `<div class="solution-box">${n.solution}</div>` : ''}
     `;
     container.appendChild(card);
   });
@@ -228,21 +247,24 @@ function createNote() {
     return;
   }
 
-  appData.problems.push({
+  // 若 appData.notes 還不存在，先初始化為陣列
+  if (!appData.notes) appData.notes = [];
+
+  appData.notes.push({
     id: `note_${Date.now()}`,
-    chapterId,
+    chapterId: chapterId,
     num: "📝 筆記",
     topic: topic,
-    question: "", // 筆記無問題區塊
-    imageUrl: currentNoteBase64Image || "", // 筆記縮圖/圖片
-    solution: content
+    note: content,                         // 存放筆記主要摘要或文字
+    imageUrl: currentNoteBase64Image || "", // 存放圖片 DataURL
+    solution: ""                            // 可留空或放詳細推導補充
   });
 
   currentChapterId = chapterId;
   renderApp();
   closeModal('addNoteModal');
 
-  // 清空輸入與圖檔狀態
+  // 清空輸入欄位
   document.getElementById('newNoteTopic').value = '';
   document.getElementById('newNoteContent').value = '';
   document.getElementById('noteImageInput').value = '';
