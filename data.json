@@ -14,6 +14,11 @@
       "id": "ch3",
       "title": "ch3",
       "desc": "3"
+    },
+    {
+      "id": "ch4",
+      "title": "第四章 直流電阻電流分佈",
+      "desc": "CH4"
     }
   ],
   "problems": [
@@ -26,12 +31,12 @@
       "solution": "<p><b>1. 假設響應：</b>令輸出電壓假設值 $V_o' = 1\\text{V}$。</p><p><b>2. 反推輸入電源電壓 $V_s'$：</b><br>• 流經 $8\\Omega$ 電阻之電流 $I_o' = \\frac{1\\text{V}}{8\\Omega} = 0.125\\text{A}$。<br>• 電阻 $12\\Omega$ 之壓降 $V_{12}' = 0.125\\text{A} \\times 12\\Omega = 1.5\\text{V}$。<br>• 跨過 $5\\Omega$ 之電壓 $V_5' = V_o' + V_{12}' = 1 + 1.5 = 2.5\\text{V}$。<br>• 由此可知，當輸出為 $1\\text{V}$ 時，對應的輸入電源電壓為 $V_s' = 2.5\\text{V}$。</p><p><b>3. 利用線性比例（線性性質）：</b><br>實際電源電壓為 $V_s = 40\\text{V}$，故實際輸出電壓為：$$V_o = V_o' \\times \\frac{V_s}{V_s'} = 1\\text{V} \\times \\frac{40\\text{V}}{2.5\\text{V}} = 16\\text{V}$$</p>"
     },
     {
-          "id": "p2-2",
-          "chapterId": "ch2",
-          "num": "2-2",
-          "topic": "電源轉換與分流原理",
-          "question": "試利用電源轉換求出圖中電路之 $I$ 值。",
-          "solution": "<ol><li><b>電壓源轉換為電流源：</b><br>將左側 $26\\text{ mV}$ 與 $9\\ \\Omega$ 串聯分支轉換為等效並聯分支：$$I_s = \\frac{26\\text{ mV}}{9\\ \\Omega} \\approx 2.889\\text{ mA}$$轉換後，此等效電流源與 $9\\ \\Omega$ 電阻並聯。</li><li><b>合併獨立源與並聯電阻：</b><ul><li><b>合成總電流 $I_{\\text{total}}$：</b>將轉換後的 $2.889\\text{ mA}$ 電流源與原電路中的 $6\\text{ mA}$ 電流源同向疊加合併：$$I_{\\text{total}} = 6\\text{ mA} + 2.889\\text{ mA} = 8.889\\text{ mA}$$</li><li><b>求等效並聯電阻 $R_p$：</b>將 $9\\ \\Omega$ 電阻與中間分支的 $4\\ \\Omega$ 電阻並聯化簡：$$R_p = 9\\ \\Omega \\parallel 4\\ \\Omega = \\frac{9 \\times 4}{9 + 4} = \\frac{36}{13}\\ \\Omega \\approx 2.769\\ \\Omega$$</li></ul></li><li><b>利用分流公式求電流 $I$：</b><br>根據分流公式（Current Divider Rule）計算流經 $7\\ \\Omega$ 分支之電流：$$I = I_{\\text{total}} \\times \\frac{R_p}{R_p + 7\\ \\Omega} = 8.889\\text{ mA} \\times \\frac{2.769\\ \\Omega}{2.769\\ \\Omega + 7\\ \\Omega}$$經計算可得：$$I = 2.5\\text{ mA}$$</li></ol>"
+      "id": "p2-2",
+      "chapterId": "ch2",
+      "num": "2-2",
+      "topic": "電源轉換與分流原理",
+      "question": "試利用電源轉換求出圖中電路之 $I$ 值。",
+      "solution": "<ol><li><b>電壓源轉換為電流源：</b><br>將左側 $26\\text{ mV}$ 與 $9\\ \\Omega$ 串聯分支轉換為等效並聯分支：$$I_s = \\frac{26\\text{ mV}}{9\\ \\Omega} \\approx 2.889\\text{ mA}$$轉換後，此等效電流源與 $9\\ \\Omega$ 電阻並聯。</li><li><b>合併獨立源與並聯電阻：</b><ul><li><b>合成總電流 $I_{\\text{total}}$：</b>將轉換後的 $2.889\\text{ mA}$ 電流源與原電路中的 $6\\text{ mA}$ 電流源同向疊加合併：$$I_{\\text{total}} = 6\\text{ mA} + 2.889\\text{ mA} = 8.889\\text{ mA}$$</li><li><b>求等效並聯電阻 $R_p$：</b>將 $9\\ \\Omega$ 電阻與中間分支的 $4\\ \\Omega$ 電阻並聯化簡：$$R_p = 9\\ \\Omega \\parallel 4\\ \\Omega = \\frac{9 \\times 4}{9 + 4} = \\frac{36}{13}\\ \\Omega \\approx 2.769\\ \\Omega$$</li></ul></li><li><b>利用分流公式求電流 $I$：</b><br>根據分流公式（Current Divider Rule）計算流經 $7\\ \\Omega$ 分支之電流：$$I = I_{\\text{total}} \\times \\frac{R_p}{R_p + 7\\ \\Omega} = 8.889\\text{ mA} \\times \\frac{2.769\\ \\Omega}{2.769\\ \\Omega + 7\\ \\Omega}$$經計算可得：$$I = 2.5\\text{ mA}$$</li></ol>"
     },
     {
       "id": "p2-3",
@@ -328,6 +333,14 @@
       "topic": "最大功率轉移綜合應用",
       "question": "如下圖所示電路中，試求輸出至 $R$ 的最大功率與電阻 $R$ 的值。",
       "solution": "<ol><li><b>求解戴維寧等效電阻 $R_{Th}$：</b><br>獨立源關閉（$10\\text{A}$ 開路、$100\\text{V}$ 短路）：$$R_{Th} = (5\\Omega + 4\\Omega) + 6\\Omega = 15\\Omega$$因此當 $R = 15\\Omega$ 時，有最大功率轉移。</li><li><b>求解戴維寧開路電壓 $V_{Th}$：</b><br>由 KCL 解得：$$V_{Th} = -150\\text{V}$$</li><li><b>計算最大功率 $P_{L\\text{max}}(t)$：</b>$$P_{L\\text{max}}(t) = \\frac{150^2}{4 \\times 15} = \\frac{22500}{60} = 375\\text{W}$$</li></ol>"
+    },
+    {
+      "id": "note_1791326672614",
+      "chapterId": "ch4",
+      "num": "📝 筆記",
+      "topic": "MATLAB",
+      "question": "",
+      "solution": "郭老說很重要"
     }
   ]
 }
