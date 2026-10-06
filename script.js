@@ -19,6 +19,8 @@ let appData = {
 
 let currentChapterId = "ch1";
 let aiAbortController = null; // 用於中斷 Gemini API 請求
+let currentBase64Image = "";  // AI 解題用的圖片 Base64
+let currentNoteBase64Image = ""; // 新增筆記用的圖片 Base64
 
 // 初始化載入
 window.onload = async function() {
@@ -117,6 +119,7 @@ function renderProblems() {
         <div class="problem-topic">${p.topic}</div>
       </div>
       ${p.question ? `<div class="question-box">${p.question}</div>` : ''}
+      ${p.imageUrl ? `<div style="text-align: center; margin-bottom: 12px;"><img src="${p.imageUrl}" alt="筆記圖片" style="max-width: 100%; max-height: 350px; border-radius: 8px; border: 1px solid var(--border-color);"></div>` : ''}
       <div class="solution-box">${p.solution}</div>
     `;
     container.appendChild(card);
@@ -200,7 +203,21 @@ function createProblem() {
   document.getElementById('newProbSolution').value = '';
 }
 
-// 新增上課筆記 (將筆記納入資料結構)
+// 筆記圖片預覽
+function previewNoteImage(event) {
+  const file = event.target.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      currentNoteBase64Image = e.target.result; // 保存 Data URL
+      document.getElementById('noteImagePreview').src = e.target.result;
+      document.getElementById('noteImagePreviewContainer').style.display = 'block';
+    };
+    reader.readAsDataURL(file);
+  }
+}
+
+// 新增上課筆記 (含圖檔與 HTML/LaTeX 筆記內容)
 function createNote() {
   const chapterId = document.getElementById('addNoteChapterSelect').value;
   const topic = document.getElementById('newNoteTopic').value.trim();
@@ -217,6 +234,7 @@ function createNote() {
     num: "📝 筆記",
     topic: topic,
     question: "", // 筆記無問題區塊
+    imageUrl: currentNoteBase64Image || "", // 筆記縮圖/圖片
     solution: content
   });
 
@@ -224,8 +242,13 @@ function createNote() {
   renderApp();
   closeModal('addNoteModal');
 
+  // 清空輸入與圖檔狀態
   document.getElementById('newNoteTopic').value = '';
   document.getElementById('newNoteContent').value = '';
+  document.getElementById('noteImageInput').value = '';
+  document.getElementById('noteImagePreviewContainer').style.display = 'none';
+  document.getElementById('noteImagePreview').src = '';
+  currentNoteBase64Image = "";
 }
 
 // 儲存設定
@@ -238,8 +261,7 @@ function saveConfig() {
   closeModal('configModal');
 }
 
-// 圖片預覽
-let currentBase64Image = "";
+// AI 解題圖片預覽
 function previewAiImage(event) {
   const file = event.target.files[0];
   if (file) {
@@ -257,7 +279,7 @@ function previewAiImage(event) {
 async function runAiAnalysis() {
   const apiKey = localStorage.getItem('cfg_gemini_key');
   if (!apiKey) {
-    alert("請先點擊左下角「⚙️ API / GitHub 設定」輸入您的 Gemini API Key！");
+    alert("請先點擊左側「⚙️ API / GitHub 設定」輸入您的 Gemini API Key！");
     return;
   }
 
@@ -390,7 +412,7 @@ function resetAiModalState() {
   progressWrapper.style.display = 'none';
 }
 
-// GitHub 一鍵同步
+// GitHub 一鍵同步 (支援備份文字、算式與圖片 DataURL)
 async function syncToGitHub() {
   const token = localStorage.getItem('cfg_github_token');
   const repo = localStorage.getItem('cfg_github_repo');
