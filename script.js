@@ -52,10 +52,12 @@ function renderChapters() {
   const list = document.getElementById('chapterList');
   const aiSelect = document.getElementById('aiChapterSelect');
   const addProbSelect = document.getElementById('addProblemChapterSelect');
+  const addNoteSelect = document.getElementById('addNoteChapterSelect');
 
   list.innerHTML = '';
   aiSelect.innerHTML = '';
   addProbSelect.innerHTML = '';
+  if (addNoteSelect) addNoteSelect.innerHTML = '';
 
   appData.chapters.forEach(ch => {
     // 渲染 sidebar 清單
@@ -80,6 +82,15 @@ function renderChapters() {
     opt2.textContent = ch.title;
     if (ch.id === currentChapterId) opt2.selected = true;
     addProbSelect.appendChild(opt2);
+
+    // 渲染新增筆記 modal 選單
+    if (addNoteSelect) {
+      const opt3 = document.createElement('option');
+      opt3.value = ch.id;
+      opt3.textContent = ch.title;
+      if (ch.id === currentChapterId) opt3.selected = true;
+      addNoteSelect.appendChild(opt3);
+    }
   });
 
   const currentCh = appData.chapters.find(c => c.id === currentChapterId);
@@ -93,7 +104,7 @@ function renderProblems() {
   const filtered = appData.problems.filter(p => p.chapterId === currentChapterId);
 
   if (filtered.length === 0) {
-    container.innerHTML = '<div style="color: #64748b; text-align: center; padding: 40px;">本章節尚無題目，請點擊左側「新增題目」或「📷 上傳題目圖檔」進行 AI 解題。</div>';
+    container.innerHTML = '<div style="color: #64748b; text-align: center; padding: 40px;">本章節尚無題目或筆記，請點擊左側「新增筆記」、「新增題目」或「📷 上傳題目圖檔」。</div>';
     return;
   }
 
@@ -102,10 +113,10 @@ function renderProblems() {
     card.className = 'card';
     card.innerHTML = `
       <div class="card-header">
-        <span class="problem-num">題號 ${p.num}</span>
+        <span class="problem-num">${p.num || '筆記'}</span>
         <div class="problem-topic">${p.topic}</div>
       </div>
-      <div class="question-box">${p.question}</div>
+      ${p.question ? `<div class="question-box">${p.question}</div>` : ''}
       <div class="solution-box">${p.solution}</div>
     `;
     container.appendChild(card);
@@ -120,7 +131,18 @@ function renderProblems() {
 function openModal(id) { document.getElementById(id).classList.add('active'); }
 function closeModal(id) { document.getElementById(id).classList.remove('active'); }
 
-// 1. 新增章節邏輯
+// 切換教學頁籤
+function switchTutorialTab(tabId) {
+  document.querySelectorAll('.tutorial-content').forEach(el => el.style.display = 'none');
+  document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active', 'btn-primary'));
+  document.querySelectorAll('.tab-btn').forEach(el => el.classList.add('btn-secondary'));
+
+  document.getElementById(tabId).style.display = 'block';
+  event.currentTarget.classList.remove('btn-secondary');
+  event.currentTarget.classList.add('btn-primary', 'active');
+}
+
+// 新增章節
 function createChapter() {
   const id = document.getElementById('newChId').value.trim();
   const title = document.getElementById('newChTitle').value.trim();
@@ -136,20 +158,17 @@ function createChapter() {
     return;
   }
 
-  const newChapter = { id, title, desc };
-  appData.chapters.push(newChapter);
-
+  appData.chapters.push({ id, title, desc });
   currentChapterId = id;
   renderApp();
   closeModal('addChapterModal');
 
-  // 清空欄位
   document.getElementById('newChId').value = '';
   document.getElementById('newChTitle').value = '';
   document.getElementById('newChDesc').value = '';
 }
 
-// 2. 新增題目邏輯
+// 新增題目
 function createProblem() {
   const chapterId = document.getElementById('addProblemChapterSelect').value;
   const num = document.getElementById('newProbNum').value.trim();
@@ -162,25 +181,51 @@ function createProblem() {
     return;
   }
 
-  const newProblem = {
+  appData.problems.push({
     id: `p_${Date.now()}`,
     chapterId,
     num,
     topic,
     question,
     solution
-  };
+  });
 
-  appData.problems.push(newProblem);
   currentChapterId = chapterId;
   renderApp();
   closeModal('addProblemModal');
 
-  // 清空欄位
   document.getElementById('newProbNum').value = '';
   document.getElementById('newProbTopic').value = '';
   document.getElementById('newProbQuestion').value = '';
   document.getElementById('newProbSolution').value = '';
+}
+
+// 新增上課筆記 (將筆記納入資料結構)
+function createNote() {
+  const chapterId = document.getElementById('addNoteChapterSelect').value;
+  const topic = document.getElementById('newNoteTopic').value.trim();
+  const content = document.getElementById('newNoteContent').value.trim();
+
+  if (!topic || !content) {
+    alert("請填寫筆記標題與內容！");
+    return;
+  }
+
+  appData.problems.push({
+    id: `note_${Date.now()}`,
+    chapterId,
+    num: "📝 筆記",
+    topic: topic,
+    question: "", // 筆記無問題區塊
+    solution: content
+  });
+
+  currentChapterId = chapterId;
+  renderApp();
+  closeModal('addNoteModal');
+
+  document.getElementById('newNoteTopic').value = '';
+  document.getElementById('newNoteContent').value = '';
 }
 
 // 儲存設定
@@ -208,7 +253,7 @@ function previewAiImage(event) {
   }
 }
 
-// 3. AI 解題 (含 Retry 與可中斷機制)
+// AI 解題 (含 Retry 與可中斷機制)
 async function runAiAnalysis() {
   const apiKey = localStorage.getItem('cfg_gemini_key');
   if (!apiKey) {
@@ -221,7 +266,6 @@ async function runAiAnalysis() {
     return;
   }
 
-  // 建立中斷控制器
   aiAbortController = new AbortController();
   const signal = aiAbortController.signal;
 
@@ -231,7 +275,7 @@ async function runAiAnalysis() {
   const progressStatus = document.getElementById('aiProgressStatus');
 
   btn.disabled = true;
-  cancelBtn.disabled = false; // 取消按鈕保持可用
+  cancelBtn.disabled = false;
   btn.style.opacity = '0.6';
   progressWrapper.style.display = 'block';
   progressStatus.textContent = '🤖 AI 正在分析影像與推導公式，請稍候...';
@@ -245,10 +289,7 @@ async function runAiAnalysis() {
   "topic": "簡短主題名稱",
   "question": "題目完整文字。所有數學變數與公式請務必用 $ ... $ 包裹，例如 $v_1(t) = 12\\text{V}$",
   "solution": "詳細計算步驟，請用 <ol><li>...</li></ol> 格式。獨立公式請用 $$ ... $$ 獨立成行包裹，例如 $$i(t) = \\frac{v_2(t)}{R_2} = 3\\text{A}$$"
-}
-注意事項：
-1. 不要包含反斜線轉義錯亂，JSON字串中的反斜線請用 double-backslash (\\\\)。
-2. 公式過長時請適當拆成多行或多個步驟。`;
+}`;
 
   const maxRetries = 3;
   let attempt = 0;
@@ -262,8 +303,6 @@ async function runAiAnalysis() {
       attempt++;
       if (attempt > 1) {
         progressStatus.textContent = `⏳ 伺服器忙碌，正在進行第 ${attempt}/${maxRetries} 次自動重試...`;
-        
-        // 支援中斷的延遲等待
         await new Promise((resolve, reject) => {
           const timer = setTimeout(resolve, 2000);
           signal.addEventListener('abort', () => {
@@ -276,7 +315,7 @@ async function runAiAnalysis() {
       const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key=${apiKey}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        signal: signal, // 綁定中斷訊號
+        signal: signal,
         body: JSON.stringify({
           contents: [{
             parts: [
@@ -288,7 +327,6 @@ async function runAiAnalysis() {
       });
 
       if (response.status === 503 || response.status === 429) {
-        console.warn(`API 忙碌 (${response.status})，準備進行 Retry...`);
         continue;
       }
 
@@ -304,16 +342,15 @@ async function runAiAnalysis() {
       const cleanJsonText = aiResponseText.replace(/```json/g, '').replace(/```/g, '').trim();
       const parsedResult = JSON.parse(cleanJsonText);
 
-      const newProblem = {
+      appData.problems.push({
         id: `p_${Date.now()}`,
         chapterId: selectedCh,
         num: parsedResult.num || "自訂",
         topic: parsedResult.topic || "AI 分析題目",
         question: parsedResult.question,
         solution: parsedResult.solution
-      };
+      });
 
-      appData.problems.push(newProblem);
       currentChapterId = selectedCh;
       renderApp();
 
@@ -336,16 +373,12 @@ async function runAiAnalysis() {
   }
 }
 
-// 取消 AI 解析
 function cancelAiAnalysis() {
-  if (aiAbortController) {
-    aiAbortController.abort(); // 即刻中斷 Fetch 與重試迴圈
-  }
+  if (aiAbortController) aiAbortController.abort();
   closeModal('aiSolveModal');
   resetAiModalState();
 }
 
-// 重置 AI Modal UI 狀態
 function resetAiModalState() {
   const btn = document.getElementById('aiSolveBtn');
   const cancelBtn = document.getElementById('aiCancelBtn');
@@ -357,7 +390,7 @@ function resetAiModalState() {
   progressWrapper.style.display = 'none';
 }
 
-// 4. GitHub 一鍵同步邏輯
+// GitHub 一鍵同步
 async function syncToGitHub() {
   const token = localStorage.getItem('cfg_github_token');
   const repo = localStorage.getItem('cfg_github_repo');
@@ -421,7 +454,6 @@ async function syncToGitHub() {
   }
 }
 
-// 匯出 JSON
 function exportData() {
   const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appData, null, 2));
   const downloadAnchor = document.createElement('a');
@@ -432,7 +464,6 @@ function exportData() {
   downloadAnchor.remove();
 }
 
-// 匯入 JSON
 function importData(event) {
   const file = event.target.files[0];
   if (file) {

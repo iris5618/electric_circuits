@@ -3,15 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>電路學</title>
+  <title>電路學學習歷程</title>
   
-  <!-- 防止 favicon 404 警告 -->
-  <link rel="icon" href="ele01.png" type="image/png">
-
-  <!-- 引入外部 CSS 樣式表 -->
+  <link rel="icon" href="data:,">
   <link rel="stylesheet" href="style.css">
 
-  <!-- 配置並引入 MathJax -->
   <script>
     window.MathJax = {
       tex: {
@@ -30,15 +26,17 @@
   <!-- 左側邊欄 -->
   <div class="sidebar">
     <div>
-      <div class="sidebar-header">電路學學習歷程</div>
+      <div class="sidebar-header">⚡ 電路學學習歷程</div>
       <div class="sidebar-actions">
         <button class="btn btn-secondary btn-sm" onclick="openModal('addChapterModal')">➕ 新增章節</button>
         <button class="btn btn-secondary btn-sm" onclick="openModal('addProblemModal')">➕ 手動新增題目</button>
+        <button class="btn btn-secondary btn-sm" onclick="openModal('addNoteModal')">📝 新增筆記</button>
       </div>
       <ul class="chapter-list" id="chapterList"></ul>
     </div>
-    <div>
-      <button class="btn btn-secondary" style="width: 100%; margin-bottom: 8px;" onclick="openModal('configModal')">⚙️ API / GitHub 設定</button>
+    <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 12px;">
+      <button class="btn btn-info" style="width: 100%;" onclick="openModal('tutorialModal')">📖 使用教學 (API / GitHub)</button>
+      <button class="btn btn-secondary" style="width: 100%;" onclick="openModal('configModal')">⚙️ API / GitHub 設定</button>
       <button class="btn btn-primary" style="width: 100%;" onclick="openModal('aiSolveModal')">📷 上傳題目圖檔 (AI 解題)</button>
     </div>
   </div>
@@ -55,6 +53,30 @@
       </div>
     </div>
     <div class="content-area" id="problemList"></div>
+  </div>
+
+  <!-- Modal: 新增筆記 -->
+  <div class="modal" id="addNoteModal">
+    <div class="modal-content">
+      <h3>📝 新增上課筆記</h3>
+      <br>
+      <form onsubmit="event.preventDefault(); createNote();">
+        <div class="form-group">
+          <label>歸類章節</label>
+          <select id="addNoteChapterSelect" required></select>
+        </div>
+        <div class="form-group">
+          <label>筆記主題 / 標題</label>
+          <input type="text" id="newNoteTopic" placeholder="例如：節點電壓法要點整理" required>
+        </div>
+        <div class="form-group">
+          <label>筆記詳細內容 (支援 HTML 與 LaTeX 公式 $...$)</label>
+          <textarea id="newNoteContent" rows="5" class="form-control" placeholder="請輸入重點整理、公式推導或課堂補充..." required></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary" style="width: 100%;">新增至本頁（可一鍵同步 GitHub）</button>
+        <button type="button" class="btn btn-secondary" onclick="closeModal('addNoteModal')" style="margin-top: 8px; width: 100%;">取消</button>
+      </form>
+    </div>
   </div>
 
   <!-- Modal: 新增章節 -->
@@ -100,7 +122,7 @@
           <input type="text" id="newProbTopic" placeholder="例如：戴維寧等效電路分析" required>
         </div>
         <div class="form-group">
-          <label>題目內容 (question，支援 LaTeX 化學/數學公式，如 $v(t)$)</label>
+          <label>題目內容 (question，支援 LaTeX 數學公式，如 $v(t)$)</label>
           <textarea id="newProbQuestion" rows="3" class="form-control" placeholder="請輸入題目內容" required></textarea>
         </div>
         <div class="form-group">
@@ -149,6 +171,49 @@
     </div>
   </div>
 
+  <!-- Modal: 使用教學 -->
+  <div class="modal" id="tutorialModal">
+    <div class="modal-content" style="max-width: 600px;">
+      <h3>📖 系統使用與設定教學</h3>
+      <br>
+      <div class="tutorial-tabs">
+        <button class="btn btn-sm btn-primary tab-btn active" onclick="switchTutorialTab('geminiTab')">🤖 Gemini API 教學</button>
+        <button class="btn btn-sm btn-secondary tab-btn" onclick="switchTutorialTab('githubTab')">☁️ GitHub 同步教學</button>
+      </div>
+
+      <!-- 教學內容：Gemini API -->
+      <div id="geminiTab" class="tutorial-content" style="display: block; margin-top: 16px;">
+        <ol class="step-list">
+          <li><b>步驟 1：</b> 前往 <a href="https://aistudio.google.com/" target="_blank">Google AI Studio</a> 並登入 Google 帳號。</li>
+          <li><b>步驟 2：</b> 點擊左上角的 <b>「Get API key」</b> 按鈕。</li>
+          <li><b>步驟 3：</b> 點擊 <b>「Create API key」</b>，選擇專案或新建專案後產生 Key。</li>
+          <li><b>步驟 4：</b> 複製生成的 API Key（開頭為 <code>AIzaSy...</code>）。</li>
+          <li><b>步驟 5：</b> 回到本網站，點擊左側 <b>「⚙️ API / GitHub 設定」</b>，將 Key 貼入 <b>Gemini API Key</b> 欄位並點選儲存即可。</li>
+        </ol>
+      </div>
+
+      <!-- 教學內容：GitHub 同步 -->
+      <div id="githubTab" class="tutorial-content" style="display: none; margin-top: 16px;">
+        <ol class="step-list">
+          <li><b>步驟 1 (建立 Repo)：</b> 登入 GitHub，建立一個新的公開或私有儲存庫（例如：<code>my-circuit-notes</code>）。</li>
+          <li><b>步驟 2 (申請 PAT Token)：</b> 前往 GitHub 的 <b>Settings</b> &gt; <b>Developer Settings</b> &gt; <b>Personal Access Tokens</b> &gt; <b>Tokens (classic)</b>。</li>
+          <li><b>步驟 3 (勾選權限)：</b> 點擊 <b>Generate new token</b>，名稱隨意填寫，存取權限務必勾選 <b><code>repo</code></b> 全項。</li>
+          <li><b>步驟 4 (複製 Token)：</b> 複製生成的 Token（開頭為 <code>ghp_...</code>，僅會顯示一次！）。</li>
+          <li><b>步驟 5 (綁定設定)：</b> 點擊本站左側 <b>「⚙️ API / GitHub 設定」</b>：
+            <ul style="margin-left: 20px; margin-top: 4px;">
+              <li><b>PAT Token：</b> 貼上剛複製的 <code>ghp_...</code></li>
+              <li><b>用戶名 / Repo：</b> 填寫 <code>帳號/儲存庫名稱</code>（如：<code>iris5618/my-circuit-notes</code>）</li>
+              <li><b>目標路徑：</b> 填寫 <code>data.json</code></li>
+            </ul>
+          </li>
+          <li><b>步驟 6 (備份筆記)：</b> 日後新增筆記或 AI 解題後，點擊右上角 <b>「☁️ 一鍵同步至 GitHub」</b>，即可自動將資料備份並更新至 GitHub 倉庫！</li>
+        </ol>
+      </div>
+
+      <button class="btn btn-secondary" onclick="closeModal('tutorialModal')" style="margin-top: 20px; width: 100%;">關閉教學</button>
+    </div>
+  </div>
+
   <!-- Modal: API 與 GitHub 金鑰設定 -->
   <div class="modal" id="configModal">
     <div class="modal-content">
@@ -178,7 +243,6 @@
     </div>
   </div>
 
-  <!-- 引入外部 JavaScript 邏輯 -->
   <script src="script.js"></script>
 </body>
 </html>

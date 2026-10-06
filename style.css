@@ -396,4 +396,41 @@ mjx-container {
     padding: 16px;
     max-height: 85vh;
   }
+
+/* 教學頁籤與步驟列表樣式 */
+.btn-info {
+  background-color: #0284c7;
+  color: white;
+}
+
+.btn-info:hover {
+  background-color: #0369a1;
+}
+
+.tutorial-tabs {
+  display: flex;
+  gap: 8px;
+  border-bottom: 2px solid var(--border-color);
+  padding-bottom: 8px;
+}
+
+.step-list {
+  padding-left: 20px;
+  line-height: 1.8;
+  color: #334155;
+  font-size: 0.95rem;
+}
+
+.step-list li {
+  margin-bottom: 10px;
+}
+
+.step-list code {
+  background: #e2e8f0;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: monospace;
+  color: #0f172a;
+}
+
 }
