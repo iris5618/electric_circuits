@@ -1,4 +1,4 @@
-// 預設資料集
+// 全域變數：應用程式資料與 AI 請求中斷控制器
 let appData = {
   chapters: [
     { id: "ch1", title: "第一章 基本概念", desc: "靜電力與基本元件" },
@@ -18,6 +18,7 @@ let appData = {
 };
 
 let currentChapterId = "ch1";
+let aiAbortController = null; // 用於中斷 Gemini API 請求
 
 // 初始化載入
 window.onload = async function() {
@@ -119,7 +120,7 @@ function renderProblems() {
 function openModal(id) { document.getElementById(id).classList.add('active'); }
 function closeModal(id) { document.getElementById(id).classList.remove('active'); }
 
-// 1. 新增章節邏輯 (配合 chapters 物件格式)
+// 1. 新增章節邏輯
 function createChapter() {
   const id = document.getElementById('newChId').value.trim();
   const title = document.getElementById('newChTitle').value.trim();
@@ -148,7 +149,7 @@ function createChapter() {
   document.getElementById('newChDesc').value = '';
 }
 
-// 2. 新增題目邏輯 (配合 problems 物件格式)
+// 2. 新增題目邏輯
 function createProblem() {
   const chapterId = document.getElementById('addProblemChapterSelect').value;
   const num = document.getElementById('newProbNum').value.trim();
@@ -207,13 +208,11 @@ function previewAiImage(event) {
   }
 }
 
-const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
-
-// AI 解題 (含 Retry 機制)
+// 3. AI 解題 (含 Retry 與可中斷機制)
 async function runAiAnalysis() {
   const apiKey = localStorage.getItem('cfg_gemini_key');
   if (!apiKey) {
-    alert("請先點擊左下角「⚙️️ API / GitHub 設定」輸入您的 Gemini API Key！");
+    alert("請先點擊左下角「⚙️ API / GitHub 設定」輸入您的 Gemini API Key！");
     return;
   }
 
@@ -222,13 +221,17 @@ async function runAiAnalysis() {
     return;
   }
 
+  // 建立中斷控制器
+  aiAbortController = new AbortController();
+  const signal = aiAbortController.signal;
+
   const btn = document.getElementById('aiSolveBtn');
   const cancelBtn = document.getElementById('aiCancelBtn');
   const progressWrapper = document.getElementById('aiProgressWrapper');
   const progressStatus = document.getElementById('aiProgressStatus');
 
   btn.disabled = true;
-  cancelBtn.disabled = true;
+  cancelBtn.disabled = false; // 取消按鈕保持可用
   btn.style.opacity = '0.6';
   progressWrapper.style.display = 'block';
   progressStatus.textContent = '🤖 AI 正在分析影像與推導公式，請稍候...';
@@ -252,17 +255,28 @@ async function runAiAnalysis() {
   let success = false;
   let responseData = null;
 
-  while (attempt < maxRetries && !success) {
-    attempt++;
-    try {
+  try {
+    while (attempt < maxRetries && !success) {
+      if (signal.aborted) throw new Error('AbortError');
+
+      attempt++;
       if (attempt > 1) {
         progressStatus.textContent = `⏳ 伺服器忙碌，正在進行第 ${attempt}/${maxRetries} 次自動重試...`;
-        await sleep(2000);
+        
+        // 支援中斷的延遲等待
+        await new Promise((resolve, reject) => {
+          const timer = setTimeout(resolve, 2000);
+          signal.addEventListener('abort', () => {
+            clearTimeout(timer);
+            reject(new Error('AbortError'));
+          });
+        });
       }
 
       const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key=${apiKey}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        signal: signal, // 綁定中斷訊號
         body: JSON.stringify({
           contents: [{
             parts: [
@@ -283,21 +297,9 @@ async function runAiAnalysis() {
 
       responseData = data;
       success = true;
-
-    } catch (err) {
-      console.error(`Attempt ${attempt} failed:`, err);
-      if (attempt >= maxRetries) {
-        progressStatus.textContent = `❌ 解析失敗：${err.message}`;
-        btn.disabled = false;
-        cancelBtn.disabled = false;
-        btn.style.opacity = '1';
-        return;
-      }
     }
-  }
 
-  if (success && responseData) {
-    try {
+    if (success && responseData) {
       const aiResponseText = responseData.candidates[0].content.parts[0].text;
       const cleanJsonText = aiResponseText.replace(/```json/g, '').replace(/```/g, '').trim();
       const parsedResult = JSON.parse(cleanJsonText);
@@ -318,30 +320,51 @@ async function runAiAnalysis() {
       progressStatus.textContent = '✅ 解析完成！';
       setTimeout(() => {
         closeModal('aiSolveModal');
-        progressWrapper.style.display = 'none';
-        btn.disabled = false;
-        cancelBtn.disabled = false;
-        btn.style.opacity = '1';
+        resetAiModalState();
       }, 1000);
+    }
 
-    } catch (parseErr) {
-      console.error(parseErr);
-      progressStatus.textContent = `❌ JSON 解析失敗，請重新嘗試`;
+  } catch (err) {
+    if (err.name === 'AbortError' || err.message === 'AbortError') {
+      console.log("使用者已取消 AI 解析");
+    } else {
+      console.error(err);
+      progressStatus.textContent = `❌ 解析失敗：${err.message}`;
       btn.disabled = false;
-      cancelBtn.disabled = false;
       btn.style.opacity = '1';
     }
   }
 }
 
-// GitHub 一鍵同步邏輯
+// 取消 AI 解析
+function cancelAiAnalysis() {
+  if (aiAbortController) {
+    aiAbortController.abort(); // 即刻中斷 Fetch 與重試迴圈
+  }
+  closeModal('aiSolveModal');
+  resetAiModalState();
+}
+
+// 重置 AI Modal UI 狀態
+function resetAiModalState() {
+  const btn = document.getElementById('aiSolveBtn');
+  const cancelBtn = document.getElementById('aiCancelBtn');
+  const progressWrapper = document.getElementById('aiProgressWrapper');
+  
+  btn.disabled = false;
+  cancelBtn.disabled = false;
+  btn.style.opacity = '1';
+  progressWrapper.style.display = 'none';
+}
+
+// 4. GitHub 一鍵同步邏輯
 async function syncToGitHub() {
   const token = localStorage.getItem('cfg_github_token');
   const repo = localStorage.getItem('cfg_github_repo');
   const path = localStorage.getItem('cfg_github_path') || 'data.json';
 
   if (!token || !repo) {
-    alert("請先在「⚙ API / GitHub 設定」中填寫 GitHub Token 與 Repo 名稱！");
+    alert("請先在「⚙️ API / GitHub 設定」中填寫 GitHub Token 與 Repo 名稱！");
     openModal('configModal');
     return;
   }
