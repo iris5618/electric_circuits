@@ -23,7 +23,7 @@ body {
   overflow: hidden;
 }
 
-/* Layout */
+/* Layout (桌機預設) */
 .sidebar {
   width: var(--sidebar-width);
   background: #ffffff;
@@ -324,61 +324,73 @@ mjx-container {
 }
 
 /* ==========================================
-   RWD 響應式設計 (手機與平板適應)
+   手機 / 平板 RWD 響應式排版 (768px 以下)
    ========================================== */
-
-/* 當螢幕寬度小於或等於 768px (手機 / 平板) */
 @media (max-width: 768px) {
-  /* 1. 將整體版面改為垂直排列 */
   body {
     flex-direction: column;
-    height: auto;
+    height: 100vh;
     overflow-y: auto;
   }
 
-  /* 2. 側邊欄寬度改為 100%，並調整最大高度 */
+  /* 側邊欄改為直立堆疊 */
   .sidebar {
     width: 100%;
+    height: auto;
     border-right: none;
     border-bottom: 1px solid var(--border-color);
     padding: 12px 16px;
+    gap: 12px;
+  }
+
+  .sidebar-actions {
+    flex-direction: row;
+    margin-bottom: 8px;
+  }
+
+  .sidebar-actions .btn {
+    flex: 1;
   }
 
   .chapter-list {
-    max-height: 150px; /* 限制手機上章節列表的高度，避免吃掉太大空間 */
+    max-height: 120px;
+    margin-bottom: 8px;
   }
 
-  /* 3. 頂部列改為垂直直立排列 */
+  /* 主內容區完整展現 */
+  .main-content {
+    width: 100%;
+    overflow: visible;
+  }
+
   .top-bar {
     height: auto;
     padding: 12px 16px;
     flex-direction: column;
-    align-items: flex-start;
+    align-items: stretch;
     gap: 10px;
   }
 
   .top-actions {
     width: 100%;
-    flex-wrap: wrap; /* 按鈕自動換行 */
+    display: grid;
+    grid-template-columns: 1fr 1fr;
     gap: 6px;
   }
 
-  .top-actions .btn {
-    flex: 1 1 calc(50% - 6px); /* 按鈕平均分配空間 (一排兩個) */
-    font-size: 0.8rem;
-    padding: 6px 8px;
+  #ghSyncBtn {
+    grid-column: span 2;
   }
 
-  /* 4. 主要內容區內邊距縮小 */
   .content-area {
     padding: 12px;
   }
 
   .card {
     padding: 14px;
+    margin-bottom: 12px;
   }
 
-  /* 5. Modal 視窗縮放優化 */
   .modal-content {
     width: 95%;
     padding: 16px;
